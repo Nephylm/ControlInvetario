@@ -20,11 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c76a0b74-4b72-48cd-b816-64d2866e32e5" name="Default Changelist" comment="Correcciones">
-      <change afterPath="$PROJECT_DIR$/PO 654 sage  348 desktops diana  10agosto2020 (2).xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PO 657.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/VIAJE 1306   9JUN2021.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/viaje 1305 26MAYO2021.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Horarios.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PO 657.xls" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Prueba.go" beforeDir="false" afterPath="$PROJECT_DIR$/Prueba.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bD.go" beforeDir="false" afterPath="$PROJECT_DIR$/bD.go" afterDir="false" />
     </list>
@@ -33,9 +31,17 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="GOROOT" path="C:\Go" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../Program Files/Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1gk7TAAOl0YBYM1wLzAb1V7brfX" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -52,7 +58,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../GoServer" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -65,16 +71,16 @@
       <working_directory value="$PROJECT_DIR$" />
       <go_parameters value="-i" />
       <kind value="DIRECTORY" />
-      <filePath value="$PROJECT_DIR$" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
     <configuration name="go build bD.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="ControlInventario" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/bD.go" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/bD.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -113,31 +119,5 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Correcciones" />
     <option name="LAST_COMMIT_MESSAGE" value="Correcciones" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="137" y="39" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1598646805386">
-      <screen x="0" y="0" width="1366" height="768" />
-    </state>
-    <state x="137" y="39" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.768@0.0.1366.768" timestamp="1598646805386" />
-    <state width="1323" height="251" key="GridCell.Tab.0.bottom" timestamp="1599865261095">
-      <screen x="0" y="0" width="1366" height="768" />
-    </state>
-    <state width="1317" height="251" key="GridCell.Tab.0.bottom/0.0.1360.768@0.0.1360.768" timestamp="1598827072732" />
-    <state width="1323" height="251" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1599865261095" />
-    <state width="1323" height="251" key="GridCell.Tab.0.center" timestamp="1599865261095">
-      <screen x="0" y="0" width="1366" height="768" />
-    </state>
-    <state width="1317" height="251" key="GridCell.Tab.0.center/0.0.1360.768@0.0.1360.768" timestamp="1598827072732" />
-    <state width="1323" height="251" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1599865261095" />
-    <state width="1323" height="251" key="GridCell.Tab.0.left" timestamp="1599865261095">
-      <screen x="0" y="0" width="1366" height="768" />
-    </state>
-    <state width="1317" height="251" key="GridCell.Tab.0.left/0.0.1360.768@0.0.1360.768" timestamp="1598827072731" />
-    <state width="1323" height="251" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1599865261095" />
-    <state width="1323" height="251" key="GridCell.Tab.0.right" timestamp="1599865261095">
-      <screen x="0" y="0" width="1366" height="768" />
-    </state>
-    <state width="1317" height="251" key="GridCell.Tab.0.right/0.0.1360.768@0.0.1360.768" timestamp="1598827072732" />
-    <state width="1323" height="251" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1599865261095" />
   </component>
 </project>

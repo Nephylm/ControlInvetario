@@ -22,7 +22,7 @@ func separador() {
 
 func abrirConexionDB() {
 
-	db, err = sql.Open("mysql", string("bienhechor:Bienhechor_1234;@tcp(74.208.31.248:3306)/bienhechor"))
+	db, err = sql.Open("mysql", string("project-inventarios:Inventarios_in06;@tcp(189.236.90.166)/Inventario"))
 	revisarError(err)
 	err = db.Ping()
 	revisarError(err)

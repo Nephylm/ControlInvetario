@@ -1,19 +1,24 @@
-package main
+package Utilidades
 
 import (
-	"encoding/csv"
+
 	"encoding/json"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	_ "github.com/go-sql-driver/mysql"
-	"io"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"log"
-	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
 )
-
+type Elemento struct {
+	Clase string `json:"class"`
+	Existencia int `json:"existencia"`
+	Modelo string`json:"modelo"`
+	IdProducto int`json:"idProducto"`
+}
 type Datos struct {
 	Data []Membresia `json:"data"`
 }
@@ -32,11 +37,8 @@ type Membresia struct {
 	Id_membresia string `json:"id_membresia"`
 	Tipo_membresia string `json:"tipo_membresia,omitempty"`
 }
-type Elemento struct {
-	Clase string `json:"class"`
-	Existencia string `json:"existencia"`
-	Modelo string`json:"modelo"`
-	IdProducto int`json:"idProducto"`
+type Monitores struct {
+	Data []Monitor `json:"data"`
 }
 type Monitor struct {
 	Warehouse string `json:"warehouse"`
@@ -73,65 +75,13 @@ type Monitor struct {
 func Almacenar(w http.ResponseWriter, req *http.Request){
 	//enableCors(&w)
 	ReadXlsx()
+	//Leer()
 	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
 }
-func pruebaAlmacenar() string{
-	inventario := Contador(Lista.Data, Minusculas("CLASS"))
-	var elme Elemento
-	elme.IdProducto=1
-	elme.Clase=inventario[0]["class"]
-	elme.Existencia=inventario[0]["existencia"]
-	elme.Modelo=inventario[0]["modelo"]
-	stmt, es := db.Prepare("INSERT INTO ListaPrecio (Clase,Existencia,Modelo,IdProducto) VALUES (?, ?, ?,?);")
-	if es != nil {
-		panic(es.Error())
-	}
-	a, err := stmt.Exec(elme.Clase, elme.Existencia,elme.Modelo,elme.IdProducto)
 
-	revisarError(err)
-	affected, _ := a.RowsAffected()
-	if affected > 0 {
-		return"exito"
-		fmt.Println("Guardado exitoso")
-	}
-	return "error"
-}
-func Guardar()  {
-	inventario := Contador(Lista.Data, Minusculas("CLASS"))
-	var c int
-
-		for _,producto := range inventario{
-
-				if producto["class"]=="Desktops"{
-					c=4
-				}else if producto["class"]=="Monitors"{
-					c=1
-				}else if producto["class"]=="bateria"{
-					c=2
-				}else if producto["class"]=="Adaptador"{
-					c=3
-				}else if producto["class"]=="disco duro"{
-					c=5
-				}
-
-				a, err := db.Exec("INSERT INTO ListaPrecio (Clase,Existencia,Modelo,IdProducto) VALUES (?, ?, ?,?)"+
-					" WHERE NOT EXISTS(SELECT * FROM ListaPrecio WHERE Codigo = ?);",
-					producto["class"], producto["existencia"],producto["modelo"],c,producto["modelo"])
-
-				revisarError(err)
-				affected, _ := a.RowsAffected()
-				if affected > 0 {
-					fmt.Println("Guardado exitoso")
-				}
-
-		}
-
-}
 func GetListaExel(w http.ResponseWriter, req *http.Request){
 	//enableCors(&w)
 	ReadXlsx()
-	//Guardar()
-	//pruebaAlmacenar()
 	//Leer()
 	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
 }
@@ -140,34 +90,9 @@ func Prueba(w http.ResponseWriter, req *http.Request){
 
 	json.NewEncoder(w).Encode("mensaje de prueba")
 }
-func ReadCSV(Archivo multipart.File){
-	var item Item
-	var items []Item
-	r:=csv.NewReader(Archivo)
-	r.Comma=','
-	r.FieldsPerRecord = -1
-	if err != nil{
-		log.Println(err)
-	}
-	campos,_:=r.Read()
 
-	fmt.Println(campos)
-	for {
-		mon, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		item.Producto = make(map[string]string)
-		for i, c := range mon {
-			item.Producto[campos[i]] = c
-		}
-		items = append(items, item)
-
-	}
-	fmt.Println(items)
-}
 func ReadXlsx(){
-//func ReadXlsx(Archivo multipart.File){
+	//func ReadXlsx(Archivo multipart.File){
 	var item Item
 	var items []Item
 	items=nil
@@ -218,10 +143,11 @@ func ReadXlsx(){
 		}
 	}
 
-	//Contador(items, Minusculas("CLASS"))
+	Contador(items, Minusculas("CLASS"))
 	Lista.Data=items
 	fmt.Print(Lista)
 }
+
 func Contador(productos [] Item, Clasificacion string) []map[string]string{
 	var inventario []map[string]string
 
@@ -242,7 +168,7 @@ func Contador(productos [] Item, Clasificacion string) []map[string]string{
 		}
 
 	}
-	print(inventario)
+
 	return inventario
 }
 func 	Clasificador(productos [] Item, Clasificacion string) [][]map[string]string{
@@ -302,6 +228,16 @@ func clear() map[string]string{
 //CONVIERTE TODAS LAS LETRAS DE UNA PALABRA A MINUSCULAS
 func Minusculas(palabra string) string{
 	return strings.ToLower(palabra)
+}
+func Iniciar() {
+
+	router := mux.NewRouter()
+
+	//router.HandleFunc("/upload", Upload).Methods("POST")
+	router.HandleFunc("/lista", GetListaExel).Methods("GET")
+	router.HandleFunc("/prueba", Prueba).Methods("GET")
+
+	log.Fatal(http.ListenAndServe(":3001", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 }
 
 

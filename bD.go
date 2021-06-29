@@ -12,9 +12,6 @@ var (
 	tabla = "membresia"
 )
 
-func main() {
-	Iniciar()
-}
 
 func separador() {
 	fmt.Println("")
@@ -22,7 +19,8 @@ func separador() {
 
 func abrirConexionDB() {
 
-	db, err = sql.Open("mysql", string("project-inventarios:Inventarios_in06;@tcp(189.236.90.166)/Inventario"))
+	//db, err = sql.Open("mysql", string("project-inventarios:Inventarios_in06;@tcp(189.236.90.166)/Inventario"))
+	db, err = sql.Open("mysql", string("root:Root;@tcp(localhost:3306)/Inventario"))
 	revisarError(err)
 	err = db.Ping()
 	revisarError(err)

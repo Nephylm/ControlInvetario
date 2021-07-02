@@ -46,11 +46,21 @@ func Guardar() string {
 			affected, _ := a.RowsAffected()
 			if affected > 0 {
 				fmt.Println("Guardado exitoso")
+			}else{
+				conicidencia :=GetItem(elme)
+				elme.Existencia=conicidencia.Existencia+elme.Existencia
+				return Actualizar(elme)
 			}
 
 
 	}
-	return "error al registrar"
+	return "Guardado exitoso"
+}
+func Reducir(red int, modelo string) string{
+	elem:=grancompu.Elemento{Modelo: modelo}
+	coincidencia:=GetItem(elem)
+	coincidencia.Existencia=coincidencia.Existencia-red;
+	return Actualizar(coincidencia)
 }
 func GetInventario() (Data []grancompu.Elemento) {
 	listado, _ := db.Query("SELECT Clase, Existencia, Modelo, IdProducto FROM inventario ")
@@ -93,18 +103,18 @@ func PruebaAlmacenar() string{
 		return"exito"
 		fmt.Println("Guardado exitoso")
 	} else{
-		Actualizar(elme)
+		conicidencia :=GetItem(elme)
+		elme.Existencia=conicidencia.Existencia+elme.Existencia
+		return Actualizar(elme)
 	}
 	return "error"
 }
 func Actualizar(elme grancompu.Elemento)string{
-	conicidencia :=GetItem(elme)
-	var existencia=conicidencia.Existencia
 	stmt, es := db.Prepare(" UPDATE inventario SET Clase = ?, Existencia = ?,Modelo = ?, IdProducto = ? WHERE Modelo=?;")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(elme.Clase, elme.Existencia+existencia,elme.Modelo,elme.IdProducto,elme.Modelo)
+	a, err := stmt.Exec(elme.Clase, elme.Existencia,elme.Modelo,elme.IdProducto,elme.Modelo)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {

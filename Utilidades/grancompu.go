@@ -1,14 +1,11 @@
 package Utilidades
 
 import (
-
 	"encoding/json"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"log"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
@@ -26,34 +23,22 @@ type Productos struct {
 
 	Data []Item `json:"data"`
 }
+type Mercancia struct {
 
+	Data []Item `json:"data"`
+}
 type Item struct{
 	Id int `json:"id"`
 	Producto map[string]string `json:"producto"`
 }
+
 var Lista Productos
 
 type Membresia struct {
 	Id_membresia string `json:"id_membresia"`
 	Tipo_membresia string `json:"tipo_membresia,omitempty"`
 }
-type Monitores struct {
-	Data []Monitor `json:"data"`
-}
-type Monitor struct {
-	Warehouse string `json:"warehouse"`
-	Class string `json:"class"`
-	AssetSSE int`json:"assetSSE"`
-	Serial string`json:"serial"`
-	Manuf string`json:"manuf"`
-	Model string`json:"model"`
-	ModelN string`json:"modelN"`
-	Cond string`json:"cond"`
-	ScreenSize int`json:"screenSize"`
-	NotesComments string`json:"notesComments"`
-	NoSKU string`json:"noSKU"`
-	Price int`json:"price"`
-}
+
 
 // EndPoints
 
@@ -67,38 +52,33 @@ type Monitor struct {
 	}
 	if (*req).Method=="POST"{
 		//var monitor Monitor
-		ReadXlsx(Archivo)
+		ReadXlsx1(Archivo)
 		//ReadCSV(Archivo)
 
 	}
 }*/
 func Almacenar(w http.ResponseWriter, req *http.Request){
 	//enableCors(&w)
-	ReadXlsx()
+	//ReadXlsx1()
 	//Leer()
 	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
 }
 
-func GetListaExel(w http.ResponseWriter, req *http.Request){
-	//enableCors(&w)
-	ReadXlsx()
-	//Leer()
-	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
-}
+
 func Prueba(w http.ResponseWriter, req *http.Request){
 	//enableCors(&w)
 
 	json.NewEncoder(w).Encode("mensaje de prueba")
 }
 
-func ReadXlsx(){
-	//func ReadXlsx(Archivo multipart.File){
+//func ReadXlsx1(){
+	func ReadXlsx1(Archivo multipart.File){
 	var item Item
 	var items []Item
 	items=nil
-	f, err := excelize.OpenFile("viaje 1305 26MAYO2021.xlsx")
+	//f, err := excelize.OpenFile("viaje 1305 26MAYO2021.xlsx")
 	//f, err := excelize.OpenFile("VIAJE 1306   9JUN2021.xlsx")
-	//f, err := excelize.OpenReader(Archivo)
+	f, err := excelize.OpenReader(Archivo)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -143,11 +123,54 @@ func ReadXlsx(){
 		}
 	}
 
-	Contador(items, Minusculas("CLASS"))
 	Lista.Data=items
 	fmt.Print(Lista)
 }
+func ReadXlsx(Archivo multipart.File)[]Item{
+	var item Item
+	var items []Item
+	items=nil
+	f, err := excelize.OpenReader(Archivo)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	hojas := f.GetSheetList()
 
+	rows, err := f.GetRows(hojas[0])
+
+	var campos []string
+	n:=1
+	item.Producto = make(map[string]string)
+	for i, row := range rows {
+		if row == nil {
+			break
+		}
+		for j, colCell := range row {
+			if i == 0 {
+				campos = row
+				//fmt.Println(campos)
+				break
+			}
+			if j < len(campos){
+				if campos[j] != "" {
+
+					item.Producto[Minusculas(campos[j])] = Minusculas(colCell)
+
+				}
+			} else {
+				break
+			}
+		}
+		if item.Producto[Minusculas(campos[0])] != "" {
+			item.Id = n
+			items = append(items, item)
+			item.Producto = make(map[string]string)
+			n++
+		}
+	}
+	return items
+}
 func Contador(productos [] Item, Clasificacion string) []map[string]string{
 	var inventario []map[string]string
 
@@ -229,15 +252,6 @@ func clear() map[string]string{
 func Minusculas(palabra string) string{
 	return strings.ToLower(palabra)
 }
-func Iniciar() {
 
-	router := mux.NewRouter()
-
-	//router.HandleFunc("/upload", Upload).Methods("POST")
-	router.HandleFunc("/lista", GetListaExel).Methods("GET")
-	router.HandleFunc("/prueba", Prueba).Methods("GET")
-
-	log.Fatal(http.ListenAndServe(":3001", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS","DELETE"}), handlers.AllowedOrigins([]string{"*"}))(router)))
-}
 
 

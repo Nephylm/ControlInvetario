@@ -55,24 +55,16 @@ type Monitor struct {
 
 // EndPoints
 
-/*func Upload(w http.ResponseWriter, req *http.Request){
+func Upload(w http.ResponseWriter, req *http.Request){
 	req.ParseMultipartForm(32 << 20)
 	Archivo, _, _ := req.FormFile("file")
 	//fmt.Println(nombre)
 	//fmt.Println(r)
-	if (*req).Method == "OPTIONS" {
-		return
-	}
-	if (*req).Method=="POST"{
-		//var monitor Monitor
-		ReadXlsx(Archivo)
-		//ReadCSV(Archivo)
-
-	}
-}*/
+	ReadXlsx(Archivo)
+}
 func Almacenar(w http.ResponseWriter, req *http.Request){
 	//enableCors(&w)
-	ReadXlsx()
+	//ReadXlsx()
 	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
 }
 func pruebaAlmacenar() string{
@@ -128,8 +120,9 @@ func Guardar()  {
 
 }
 func GetListaExel(w http.ResponseWriter, req *http.Request){
+
 	//enableCors(&w)
-	ReadXlsx()
+	//ReadXlsx()
 	//Guardar()
 	//pruebaAlmacenar()
 	//Leer()
@@ -166,14 +159,14 @@ func ReadCSV(Archivo multipart.File){
 	}
 	fmt.Println(items)
 }
-func ReadXlsx(){
-//func ReadXlsx(Archivo multipart.File){
+//func ReadXlsx(){
+func ReadXlsx(Archivo multipart.File){
 	var item Item
 	var items []Item
 	items=nil
-	f, err := excelize.OpenFile("viaje 1305 26MAYO2021.xlsx")
+	//f, err := excelize.OpenFile("viaje 1305 26MAYO2021.xlsx")
 	//f, err := excelize.OpenFile("VIAJE 1306   9JUN2021.xlsx")
-	//f, err := excelize.OpenReader(Archivo)
+	f, err := excelize.OpenReader(Archivo)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -105,8 +105,8 @@ func Monitores (item grancompu.Item){
 	monitor.SerieOriginal=item.Producto["serie original"]
 	monitor.Tipo=item.Producto["tipo"]
 	monitor.Salida=item.Producto["salidas"]
-	stmt, es := db.Prepare("INSERT INTO monitores (Clase,Modelo,Marca,Pulgadas, SerieDistri, SerieOriginal, Tipo, Salidas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM inventario WHERE Modelo=?);")
+	stmt, es := db.Prepare("INSERT INTO Monitores (Clase,Modelo,Marca,Pulgadas, SerieDistri, SerieOriginal, Tipo, Salidas)" +
+		" SELECT ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE Modelo=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -138,9 +138,9 @@ func AllinOne (item grancompu.Item){
 	AllOne.SerieOriginal=item.Producto["serie original"]
 	AllOne.SerieDistribuidor=item.Producto["serie distribuidor"]
 	AllOne.Pulgadas= item.Producto["pulgadas"]
-	stmt, es := db.Prepare("INSERT INTO allinone (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHHD" +
+	stmt, es := db.Prepare("INSERT INTO AllinOne (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHHD" +
 		", Capacidad, SerieHHD, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM inventario WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE Modelo=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -174,9 +174,9 @@ func Laptops (item grancompu.Item){
 	Laptop.SerieOriginal=item.Producto["serie original"]
 	Laptop.SerieDistribuidor=item.Producto["serie distribuidor"]
 	Laptop.Pulgadas= item.Producto["pulgadas"]
-	stmt, es := db.Prepare("INSERT INTO laptops (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
+	stmt, es := db.Prepare("INSERT INTO Laptops (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
 		", Capacidad, SerieHDD,Bateria, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM inventario WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Laptops WHERE Modelo=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -209,9 +209,9 @@ func Desktop (item grancompu.Item){
 	Escritorio.SerieOriginal=item.Producto["serie original"]
 	Escritorio.SerieDistribuidor=item.Producto["serie distribuidor"]
 	Escritorio.Formato=item.Producto["formato"]
-	stmt, es := db.Prepare("INSERT INTO desktop (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
+	stmt, es := db.Prepare("INSERT INTO Desktop (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
 		", Capacidad, SerieHDD, Eliminador, Memoria, SerieOriginal, SerieDistri, Formato)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM inventario WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE Modelo=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -229,7 +229,7 @@ func Desktop (item grancompu.Item){
 }
 //Recupera los monitores de la base de datos
 func GetMonitores() (Data []modelos.Monitor) {
-	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Pulgadas, Tipo, SerieOriginal,SerieDistri, Salidas FROM monitores;")
+	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Pulgadas, Tipo, SerieOriginal,SerieDistri, Salidas FROM Monitores;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -264,7 +264,7 @@ func GetMonitores() (Data []modelos.Monitor) {
 //Recupera las computadoras all in one de la base de datos
 func GetAllInOne() (Data []modelos.AllInOne) {
 	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHHD," +
-		" Capacidad, SerieHHD, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas FROM allinone;")
+		" Capacidad, SerieHHD, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas FROM AllinOne;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -306,7 +306,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD," +
-		" Capacidad, SerieHDD,Bateria, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas FROM laptops;")
+		" Capacidad, SerieHDD,Bateria, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas FROM Laptops;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -347,8 +347,9 @@ func GetLaptop() (Data []modelos.Laptop) {
 	}
 	return
 }
+//Recupera las computadoras de escritoria de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD, Capacidad, SerieHDD, Eliminador, Memoria, SerieOriginal, SerieDistri, Formato FROM desktop;")
+	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD, Capacidad, SerieHDD, Eliminador, Memoria, SerieOriginal, SerieDistri, Formato FROM Desktop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(

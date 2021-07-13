@@ -15,8 +15,8 @@ var (
 //NuevaConexionBD configura la conexión a la base de datos
 func NuevaConexionBD() {
 	//Se configura la conexion a la base de datos
-	//db, err = sql.Open("mysql", "project-inventarios:Inventarios_in06@tcp(189.236.104.191:3306)/Inventario")
-	db, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/Inventario")
+	db, err = sql.Open("mysql", "project-inventarios:Inventarios_in06@tcp(189.236.104.191:3306)/Inventario")
+	//db, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/Inventario")
 	revisarError(err)
 	//Se comprueba que la conexion siga activa
 	err = db.Ping()

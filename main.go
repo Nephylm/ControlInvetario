@@ -34,14 +34,15 @@ func api() {
 	fmt.Println("Detener Servidor con Ctrl + C")
 
 	gorillaRoute.HandleFunc("/lista", grancompuC.GetListaExel).Methods("GET")
+	//Recibe los erchivos de exel y almacena el contenido en la BD
 	gorillaRoute.HandleFunc("/Guardar", grancompuC.Guardar).Methods("POST")
-	gorillaRoute.HandleFunc("/Inventario", grancompuC.ObteneInventario).Methods("GET")
+	//Rutas de consulta de contenido de la BD.
 	gorillaRoute.HandleFunc("/GetMonitores", grancompuC.ObteneMonitores).Methods("GET")
 	gorillaRoute.HandleFunc("/GetDesktops", grancompuC.ObteneDesktops).Methods("GET")
 	gorillaRoute.HandleFunc("/GetAllinOne", grancompuC.ObteneAllione).Methods("GET")
 	gorillaRoute.HandleFunc("/GetLaptops", grancompuC.ObteneLaptops).Methods("GET")
+	//ruta pra probar metodos
 	gorillaRoute.HandleFunc("/Pruebas", grancompuC.Pruebas).Methods("POST")
-	gorillaRoute.HandleFunc("/Upload", grancompuC.Upload).Methods("POST")
 	//'PathPrefix' estamos indicando apartir de que direccion se va a escuchar para publicar archivos
 	//'http.FileServer' indica que va a estar imprimiendo archivos en el navegador
 	//'http.Dir' indica que todo lo que esté dentro de ese directorio se podrá ejecutar con

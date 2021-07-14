@@ -51,12 +51,8 @@ func GetListaExel(w http.ResponseWriter, req *http.Request){
 	json.NewEncoder(w).Encode(grancompu.Contador(grancompu.Lista.Data, grancompu.Minusculas("CLASS")))
 }
 func Pruebas(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(32 << 20)
-	Archivo, _, err := r.FormFile("file")
-	if err != nil{
-		fmt.Println(err)
-	}
-	json.NewEncoder(w).Encode(grancompu.ReadXlsx(Archivo))
+	ip:=r.Body
+	json.NewEncoder(w).Encode(ip)
 }
 func Upload(w http.ResponseWriter, req *http.Request){
 	req.ParseMultipartForm(32 << 20)

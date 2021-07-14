@@ -106,7 +106,7 @@ func Monitores (item grancompu.Item){
 	monitor.Tipo=item.Producto["tipo"]
 	monitor.Salida=item.Producto["salidas"]
 	stmt, es := db.Prepare("INSERT INTO Monitores (Clase,Modelo,Marca,Pulgadas, SerieDistri, SerieOriginal, Tipo, Salidas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -140,7 +140,7 @@ func AllinOne (item grancompu.Item){
 	AllOne.Pulgadas= item.Producto["pulgadas"]
 	stmt, es := db.Prepare("INSERT INTO AllinOne (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHHD" +
 		", Capacidad, SerieHHD, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -176,7 +176,7 @@ func Laptops (item grancompu.Item){
 	Laptop.Pulgadas= item.Producto["pulgadas"]
 	stmt, es := db.Prepare("INSERT INTO Laptops (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
 		", Capacidad, SerieHDD,Bateria, Eliminador, Memoria, SerieOriginal, SerieDistri, Pulgadas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Laptops WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Laptops WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -211,7 +211,7 @@ func Desktop (item grancompu.Item){
 	Escritorio.Formato=item.Producto["formato"]
 	stmt, es := db.Prepare("INSERT INTO Desktop (Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHDD" +
 		", Capacidad, SerieHDD, Eliminador, Memoria, SerieOriginal, SerieDistri, Formato)" +
-		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE Modelo=?);")
+		" SELECT ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?,?,? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}

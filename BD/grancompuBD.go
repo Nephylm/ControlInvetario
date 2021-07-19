@@ -259,8 +259,6 @@ func GetMonitores() (Data []modelos.Monitor) {
 	}
 	return
 }
-
-
 //Recupera las computadoras all in one de la base de datos
 func GetAllInOne() (Data []modelos.AllInOne) {
 	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Procesador, Velocidad, Generacion, MarcaHHD," +

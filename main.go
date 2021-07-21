@@ -30,7 +30,7 @@ func api() {
 	//El metodo 'StrictSlash', cuando está en 'true' no lee la última diagonal de la URL
 	//Es decir, que si se solicita '/agregaUsuario/' es lo mismo que solicitar '/agregaUsuario'
 	gorillaRoute := mux.NewRouter().StrictSlash(true)
-	fmt.Println("Servidor iniciado en el puerto 8081")
+	fmt.Println("Servidor iniciado en el puerto 8085")
 	fmt.Println("Detener Servidor con Ctrl + C")
 
 	gorillaRoute.HandleFunc("/lista", grancompuC.GetListaExel).Methods("GET")
@@ -66,5 +66,5 @@ func api() {
 	//Se lanza el servidor en el puerto 8081
 	//en caso de existir error, se mostrará con 'log.Fatal'
 	//log.Fatal(http.ListenAndServe(":8081", gorillaRoute))
-	log.Fatal(http.ListenAndServe(":8081", handlerCORS))
+	log.Fatal(http.ListenAndServe(":8085", handlerCORS))
 }

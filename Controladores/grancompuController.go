@@ -1,9 +1,8 @@
 package Controladores
 
 import (
-
 	bd "ControlInvetario/BD"
-	grancompu "ControlInvetario/Utilidades"
+	utilidades "ControlInvetario/Utilidades"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,9 +14,9 @@ func Guardar(w http.ResponseWriter, r *http.Request) {
 	if err != nil{
 		fmt.Println(err)
 	}
-	//items:=grancompu.ReadXlsx(Archivo)
+	//items:=utilidades.ReadXlsx(Archivo)
 	//bd.Guardar(items)
-	json.NewEncoder(w).Encode(bd.Guardar(grancompu.ReadXlsx(Archivo)))
+	json.NewEncoder(w).Encode(bd.Guardar(utilidades.ReadXlsx(Archivo)))
 }
 
 func ObteneInventario(w http.ResponseWriter, r *http.Request) {
@@ -46,13 +45,26 @@ func GetListaExel(w http.ResponseWriter, req *http.Request){
 	if err != nil{
 		fmt.Println(err)
 	}
-	grancompu.ReadXlsx1(Archivo)
+	utilidades.ReadXlsx1(Archivo)
 	//Leer()
-	json.NewEncoder(w).Encode(grancompu.Contador(grancompu.Lista.Data, grancompu.Minusculas("CLASS")))
+	json.NewEncoder(w).Encode(utilidades.Contador(utilidades.Lista.Data, utilidades.Minusculas("CLASS")))
+}
+func GuardarUno(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y arrai de itmes
+	var items []utilidades.Item
+	var item utilidades.Item
+	//des serializa el json a un map
+	json.NewDecoder(r.Body).Decode(&item.Producto)
+	fmt.Println(item)
+	items=append(items,item)
+	//guarda el producto
+	json.NewEncoder(w).Encode(bd.Guardar(items))
 }
 func Pruebas(w http.ResponseWriter, r *http.Request) {
-	ip:=r.Body
-	json.NewEncoder(w).Encode(ip)
+	utilidades.Peticion()
+	utilidades.GetInsumos()
+	json.NewEncoder(w).Encode("ALGO")
 }
 func Upload(w http.ResponseWriter, req *http.Request){
 	req.ParseMultipartForm(32 << 20)
@@ -62,6 +74,6 @@ func Upload(w http.ResponseWriter, req *http.Request){
 	}
 	//fmt.Println(nombre)
 	//fmt.Println(r)
-	grancompu.ReadXlsx1(Archivo)
+	utilidades.ReadXlsx1(Archivo)
 	json.NewEncoder(w).Encode("archivo recibido")
 }

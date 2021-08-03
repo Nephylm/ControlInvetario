@@ -28,7 +28,7 @@ type Mercancia struct {
 	Data []Item `json:"data"`
 }
 type Item struct{
-	Id int `json:"id"`
+	Contador int `json:"contador"`
 	Producto map[string]string `json:"producto"`
 }
 
@@ -62,13 +62,6 @@ func Almacenar(w http.ResponseWriter, req *http.Request){
 	//ReadXlsx1()
 	//Leer()
 	json.NewEncoder(w).Encode(Contador(Lista.Data, Minusculas("CLASS")))
-}
-
-
-func Prueba(w http.ResponseWriter, req *http.Request){
-	//enableCors(&w)
-
-	json.NewEncoder(w).Encode("mensaje de prueba")
 }
 
 //func ReadXlsx1(){
@@ -106,7 +99,7 @@ func Prueba(w http.ResponseWriter, req *http.Request){
 				item.Producto[Minusculas(campos[j])] = colCell
 
 			}else{
-				item.Id=n
+				item.Contador =n
 
 				if len(item.Producto)>0 {
 					items = append(items, item)
@@ -116,7 +109,7 @@ func Prueba(w http.ResponseWriter, req *http.Request){
 			}
 		}
 		if item.Producto[Minusculas(campos[0])] != "" {
-			item.Id=n
+			item.Contador =n
 			items = append(items, item)
 			item.Producto = make(map[string]string)
 			n++
@@ -163,7 +156,7 @@ func ReadXlsx(Archivo multipart.File)[]Item{
 			}
 		}
 		if item.Producto[Minusculas(campos[0])] != "" {
-			item.Id = n
+			item.Contador = n
 			items = append(items, item)
 			item.Producto = make(map[string]string)
 			n++
@@ -179,7 +172,7 @@ func Contador(productos [] Item, Clasificacion string) []map[string]string{
 		var item Item
 		var items []Item
 		for i,objeto:= range class{
-			item.Id=i
+			item.Contador =i
 			item.Producto=objeto
 			items=append(items,item)
 		}

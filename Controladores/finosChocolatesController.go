@@ -26,6 +26,14 @@ func ActualizarInsumo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }
+func AgregarDetalles(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var Detalles modelos.Detalles
+	json.NewDecoder(r.Body).Decode(&Detalles)
+	resp :=bd.AgregraDetalleP(Detalles)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
 //UTILIDADES
 func CargaIdProdutos(w http.ResponseWriter, r *http.Request) {
 	resp:=bd.RegistarIdProducto(utilidades.GetProductos())
@@ -48,7 +56,9 @@ func GuarProductoOrden(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var productoOrden modelos.ProductosOrden
 	json.NewDecoder(r.Body).Decode(&productoOrden)
-	json.NewEncoder(w).Encode(bd.AgregarProductosOrden(productoOrden))
+	resp :=bd.AgregarProductosOrden(productoOrden)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
 }
 func ObtenerProductoOrden(w http.ResponseWriter, r *http.Request) {
 	ProductosOrden,resp:=bd.GetProductosOrden()

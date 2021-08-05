@@ -430,7 +430,7 @@ func GetProductosOrdenProduccion(productoOrden modelos.ProductosOrden)(Data []mo
 	return
 }
 func ContadorProductos(idProducto int)(existencia int){
-	listado, _ := db.Query("SUM Existencia FROM ProductosOrden WHERE IdProducto=?;",idProducto)
+	listado, _ := db.Query("SELECT SUM(Existencia)  FROM ProductosOrden WHERE IdProducto=?;",idProducto)
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -516,7 +516,7 @@ func AgregraDetalleP (DetalleP modelos.Detalles)(resp modelos.RespuestaSencilla)
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(DetalleP.IdProducto,DetalleP.Inventario)
+	a, err := stmt.Exec(DetalleP.IdProducto,DetalleP.Inventario,DetalleP.IdProducto)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -525,10 +525,21 @@ func AgregraDetalleP (DetalleP modelos.Detalles)(resp modelos.RespuestaSencilla)
 		fmt.Println("Guardado exitoso")
 
 		return
+	}else {
+		stmt, es := db.Prepare("UPDATE DetalleProducto SET Inventario=? WHERE IdProducto=?;")
+		if es != nil {
+			panic(es.Error())
+		}
+		_, err := stmt.Exec(DetalleP.Inventario,DetalleP.IdProducto)
+		revisarError(err)
+		if affected > 0 {
+			resp.CodigoRespHTTP=200
+			resp.Response="Actualizacion exitosa"
+			fmt.Println("Actualizacion exitoso")
+			return
+		}
 	}
 	resp.CodigoRespHTTP=400
-	resp.Response="Error al registrar, ya registrado"
-	fmt.Println("error al registrar ya registrado")
+	resp.Response="Error al registrar"
 	return
-
 }

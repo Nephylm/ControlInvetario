@@ -66,6 +66,7 @@ func api() {
 	gorillaRoute.HandleFunc("/ActualizarProductoOrden", grancompuC.ActualizarProductoOrden).Methods("POST")
 	//muestra inventario de porductos x orden
 	gorillaRoute.HandleFunc("/ObtenerProductoOrden", grancompuC.ObtenerProductoOrden).Methods("GET")
+	//gorillaRoute.HandleFunc("/AgregarDetalles", grancompuC.GuarProductoOrden).Methods("POST")
 
 
 	//UTILIDADES

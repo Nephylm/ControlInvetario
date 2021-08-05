@@ -31,6 +31,7 @@ func TerminarConexionBD() {
 
 //función para imprimir un error de consulta o conexión a la base de datos en caso de existir
 func revisarError(err error) {
+
 	if err != nil {
 		panic(err)
 	}

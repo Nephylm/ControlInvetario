@@ -20,15 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c76a0b74-4b72-48cd-b816-64d2866e32e5" name="Default Changelist" comment="Correcciones">
-      <change afterPath="$PROJECT_DIR$/BD/finosChocolatesBD.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Controladores/finosChocolatesController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Modelos/finosChocolatesModelos.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilidades/finoschocolates.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BD/grancompuBD.go" beforeDir="false" afterPath="$PROJECT_DIR$/BD/grancompuBD.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controladores/grancompuController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Controladores/grancompuController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utilidades/grancompu.go" beforeDir="false" afterPath="$PROJECT_DIR$/Utilidades/grancompu.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BD/baseDatos.go" beforeDir="false" afterPath="$PROJECT_DIR$/BD/baseDatos.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BD/finosChocolatesBD.go" beforeDir="false" afterPath="$PROJECT_DIR$/BD/finosChocolatesBD.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controladores/finosChocolatesController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Controladores/finosChocolatesController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modelos/finosChocolatesModelos.go" beforeDir="false" afterPath="$PROJECT_DIR$/Modelos/finosChocolatesModelos.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilidades/finoschocolates.go" beforeDir="false" afterPath="$PROJECT_DIR$/Utilidades/finoschocolates.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +70,7 @@
     <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../bienhechorBack" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../accesosBack" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">

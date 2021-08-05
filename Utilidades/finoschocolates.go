@@ -72,7 +72,6 @@ func GetProductos() (LProductos []modelos.IdProducto) {
 	fmt.Println(LProductos)
 	return LProductos
 }
-
 func GetInsumosxProducto(IdProducto string) (InsumosxProducto []modelos.InsumoxProducto) {
 	response, err := http.Get("http://74.208.31.248:8086/api/insumosxproducto/"+IdProducto)
 	var LisInsumosxProducto []modelos.InsumoxProducto

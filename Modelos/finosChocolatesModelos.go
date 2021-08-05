@@ -70,4 +70,13 @@ type InsumoxProducto struct {
 	CantidadUsada int `json:"cantidadUsada"`
 	CostoTotal float64 `json:"costoTotal"`
 }
-
+//Estructura de detalles del producto
+type Detalles struct {
+	IdDetalleP int `json:"idDetalleP"`
+	IdProducto int `json:"idProducto"`
+	Inventario int `json:"inventario"`
+}
+type RespuestaSencilla struct {
+	CodigoRespHTTP int `json:"CodigoRespHTTP"`
+	Response string `json:"Response"`
+}

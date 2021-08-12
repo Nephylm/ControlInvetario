@@ -55,11 +55,11 @@ func CargarInsumos (insumo modelos.Insumo)(resp modelos.RespuestaSencilla){
 //modifica los datos de los insumos
 func ActualizarInsumo (insumo modelos.InventarioInsumos)(resp modelos.RespuestaSencilla){
 
-	stmt, es := db.Prepare("UPDATE Insumo SET Existencia=?, CantidadMinima=?,CantidadMaxima=?,Activo=? WHERE Nombre=?;")
+	stmt, es := db.Prepare("UPDATE Insumo SET Existencia=?, CantidadMinima=?,CantidadMaxima=?,Activo=? WHERE IdInsumo=?;")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(insumo.Existencia,insumo.CantidadMinima,insumo.CantidadMaxima,insumo.Activo,insumo.Nombre)
+	a, err := stmt.Exec(insumo.Existencia,insumo.CantidadMinima,insumo.CantidadMaxima,insumo.Activo,insumo.IdInsumo)
 
 	revisarError(err)
 	affected, _ := a.RowsAffected()
@@ -317,18 +317,25 @@ func ActualizarProductosOrden (productoOrden modelos.ProductosOrden)(resp modelo
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(productoOrden.Existencia,productoOrden.FechaCad,productoOrden.FechaCad,productoOrden.IdRegistro)
+	a, err := stmt.Exec(productoOrden.Existencia,productoOrden.FechaProd,productoOrden.FechaCad,productoOrden.IdRegistro)
+	id:=productoOrden.IdProducto
+	productoT:=modelos.ProductoTerminado{
+		Producto:id,
+		OrdenProduccion: GetIdProductosOrden(productoOrden),
+	}
 	if anterior.Existencia < productoOrden.Existencia{
-		productoT:=modelos.ProductoTerminado{
-			Producto: productoOrden.IdProducto,
-			OrdenProduccion: GetIdProductosOrden(productoOrden),
-		}
+
 		i:=anterior.Existencia
 		for i<productoOrden.Existencia{
 			AgregarPTerminado(productoT)
-			ReducirInsumo(strconv.Itoa(productoOrden.IdProducto))
+			ReducirInsumo(strconv.Itoa(id))
 			i++
 		}
+		detalleP:=modelos.Detalles{
+			IdProducto: productoOrden.IdProducto,
+			Inventario: ContadorProductos(id),
+		}
+		AgregraDetalleP(detalleP)
 	}else if anterior.Existencia > productoOrden.Existencia{
 		i:=productoOrden.Existencia
 		list:=GetPTerminado(productoOrden.IdRegistro)
@@ -378,7 +385,7 @@ func GetProductoOrden(id int)(Data modelos.ProductosOrden){
 	return
 }
 func GetProductos()(Data []modelos.ProductosOrden){
-	listado, _ := db.Query("SELECT PO.IdRegistro,PO.OrdenProduccion,PO.IdProducto,Producto.NombreProducto,PO.Existencia, PO.FechaProd," +
+	listado, err := db.Query("SELECT PO.IdRegistro,PO.OrdenProduccion,PO.IdProducto,Producto.NombreProducto,PO.Existencia, PO.FechaProd," +
 		" PO.FechaCad FROM ProductosOrden AS PO INNER JOIN Producto ON PO.IdProducto=Producto.IdProducto;")
 	revisarError(err)
 	for listado.Next() {
@@ -460,6 +467,15 @@ func CargarIdProducto (idProducto modelos.IdProducto){
 	}
 }
 func RegistarIdProducto(idProductos []modelos.IdProducto)( resp modelos.RespuestaSencilla)  {
+	for _,idProducto:=range idProductos{
+		CargarIdProducto(idProducto)
+	}
+	resp.CodigoRespHTTP=200
+	resp.Response="Guardado exitoso"
+	return
+}
+func ActualizarRegistroIdProducto(idProductos []modelos.IdProducto)( resp modelos.RespuestaSencilla)  {
+	db.Query("DELETE * FROM Producto;")
 	for _,idProducto:=range idProductos{
 		CargarIdProducto(idProducto)
 	}

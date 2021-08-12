@@ -153,6 +153,26 @@ func RegistarInsumo(Insumos []modelos.Insumo)(resp modelos.RespuestaSencilla)  {
 	resp.Response="Guardado exitoso"
 	return
 }
+func EliminnarInsumo(Insumo modelos.InventarioInsumos)(resp modelos.RespuestaSencilla){
+	stmt, es := db.Prepare("DELETE * FROM Insumo WHERE IdInsumo=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Insumo.IdInsumo)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP=200
+		resp.Response="Eliminado exitoso"
+		fmt.Println("Eliminado exitoso")
+
+	} else {
+		resp.CodigoRespHTTP=400
+		resp.Response="Error al Eliminar"
+		fmt.Println("error al Eliminar")
+	}
+	return
+}
 
 //PRODUCTO TERMINADO
 //Registra un producto terminado
@@ -467,11 +487,16 @@ func CargarIdProducto (idProducto modelos.IdProducto){
 	}
 }
 func RegistarIdProducto(idProductos []modelos.IdProducto)( resp modelos.RespuestaSencilla)  {
-	for _,idProducto:=range idProductos{
-		CargarIdProducto(idProducto)
+	chequeo,_:=GetIdProductos()
+	if chequeo==nil{
+		for _,idProducto:=range idProductos{
+			CargarIdProducto(idProducto)
+		}
+		resp.CodigoRespHTTP=200
+		resp.Response="Guardado exitoso"
+		return
 	}
-	resp.CodigoRespHTTP=200
-	resp.Response="Guardado exitoso"
+	resp =ActualizarRegistroIdProducto(idProductos)
 	return
 }
 func ActualizarRegistroIdProducto(idProductos []modelos.IdProducto)( resp modelos.RespuestaSencilla)  {

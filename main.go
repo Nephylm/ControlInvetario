@@ -8,20 +8,19 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"net/http"
-	"time"
 )
 
 //La función main es la primera función en ser ejecutada
 func main() {
 	//se ejecuta la función api
 
-	go func() {
+	/*go func() {
 		tdr := time.Tick(2 * time.Minute)
 
 		for horaActual := range tdr {
 			fmt.Println("La hora es", horaActual)
 		}
-	}()
+	}()*/
 
 	//Utilidades.GetInsumosxProducto(a)
 	api()

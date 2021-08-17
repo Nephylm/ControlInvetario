@@ -177,11 +177,11 @@ func EliminnarInsumo(Insumo modelos.InventarioInsumos)(resp modelos.RespuestaSen
 //PRODUCTO TERMINADO
 //Registra un producto terminado
 func AgregarPTerminado (productoT modelos.ProductoTerminado)(resp modelos.RespuestaSencilla){
-	stmt, es := db.Prepare("INSERT INTO Chocolates (IdProducto,IdRegistro) VALUES (?,?);")
+	stmt, es := db.Prepare("INSERT INTO Chocolates (IdProducto,IdRegistro, Existencia) VALUES (?,?,?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(productoT.Producto,productoT.OrdenProduccion)
+	a, err := stmt.Exec(productoT.Producto,productoT.OrdenProduccion,productoT.Existencia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -260,18 +260,10 @@ func AgregarProductosOrden (productoOrden modelos.ProductosOrden)(resp modelos.R
 		productoT=modelos.ProductoTerminado{
 			Producto: Id,
 			OrdenProduccion: GetIdProductosOrden(productoOrden),
+			Existencia: ContadorProductos(Id),
 		}
-		i:=0
-		for i < productoOrden.Existencia{
-			AgregarPTerminado(productoT)
-			i++
-		}
+		AgregarPTerminado(productoT)
 		ReducirInsumo(strconv.Itoa(Id))
-		detalleP:=modelos.Detalles{
-			IdProducto: productoOrden.IdProducto,
-			Inventario: ContadorProductos(Id),
-		}
-		AgregraDetalleP(detalleP)
 		return
 	}
 		resp.CodigoRespHTTP=400
@@ -342,30 +334,13 @@ func ActualizarProductosOrden (productoOrden modelos.ProductosOrden)(resp modelo
 	productoT:=modelos.ProductoTerminado{
 		Producto:id,
 		OrdenProduccion: GetIdProductosOrden(productoOrden),
+		Existencia: ContadorProductos(id),
 	}
 	if anterior.Existencia < productoOrden.Existencia{
-
-		i:=anterior.Existencia
-		for i<productoOrden.Existencia{
 			AgregarPTerminado(productoT)
 			ReducirInsumo(strconv.Itoa(id))
-			i++
-		}
-		detalleP:=modelos.Detalles{
-			IdProducto: productoOrden.IdProducto,
-			Inventario: ContadorProductos(id),
-		}
-		AgregraDetalleP(detalleP)
 	}else if anterior.Existencia > productoOrden.Existencia{
-		i:=productoOrden.Existencia
-		list:=GetPTerminado(productoOrden.IdRegistro)
-		for _,eliminar:=range list{
-			EliminarPTerminado(eliminar)
-			i++
-			if anterior.Existencia==productoOrden.Existencia{
-				break
-			}
-		}
+
 	}
 	revisarError(err)
 	affected, _ := a.RowsAffected()
@@ -551,7 +526,6 @@ func ReducirInsumo(IdProducto string){
 	}
 }
 func AgregraDetalleP (DetalleP modelos.Detalles)(resp modelos.RespuestaSencilla){
-
 	stmt, es := db.Prepare("INSERT INTO DetalleProducto (IdProducto,Inventario)" +
 		" SELECT ?,?  WHERE NOT EXISTS (SELECT *FROM DetalleProducto WHERE IdProducto=?);")
 	if es != nil {

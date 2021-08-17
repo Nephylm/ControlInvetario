@@ -1,39 +1,51 @@
 package Modelos
 type Laptop struct {
 	IdProducto int`json:"idLaptop"`
-	Clase string `json:"class"`
+	Fecha string `json:"fecha"`
+	OC string `json:"oc"`
+	Suc string `json:"sucursal"`
+	Familia string `json:"familia"`
+	Serie string `json:"serie"`
+	SerieOriginal string `json:"serieOriginal"`
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Velocidad string `json:"velocidad"`
 	Generacion string `json:"generacion"`
-	MarcaDisco string `json:"marcaDisco"`
-	Capacidad string `json:"capacidad"`
-	SerieDisco string `json:"serieDisco"`
-	Bateria string `json:"bateria"`
-	Eliminador string `json:"eliminador"`
-	Memoria string `json:"memoria"`
-	SerieOriginal string `json:"serieOriginal"`
-	SerieDistribuidor string `json:"serieDistribuidor"`
+	MemGB string`json:"memGB"`
+	Velocidad string `json:"velocidad"`
+	//HddTipo string `json:"hddTipo"`
+	HddGB string `json:"hddGB"`
+	HddSerie string `json:"hddSerie"`
+	UnidadOpt string`json:"unidadOptica"`
+	FuenteSerie string `json:"fuenteSerie"`
 	Pulgadas string `json:"pulgadas"`
+	Licencia string`json:"licencia"`
+	Comentarios string `json:"comentarios"`
 }
 
 type Desktop struct {
 	IdProducto int`json:"idDesktop"`
-	Clase string `json:"class"`
+	Fecha string `json:"fecha"`
+	OC string `json:"oc"`
+	Suc string `json:"sucursal"`
+	Familia string `json:"familia"`
+	Serie string `json:"serie"`
+	SerieOriginal string `json:"serieOriginal"`
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Velocidad string `json:"velocidad"`
 	Generacion string `json:"generacion"`
-	MarcaDisco string `json:"marcaDisco"`
-	Capacidad string `json:"capacidad"`
-	SerieDisco string `json:"serieDisco"`
-	Fuente_Eliminador string `json:"fuente_Eliminador"`
-	Memoria string `json:"memoria"`
-	SerieOriginal string `json:"serieOriginal"`
-	SerieDistribuidor string `json:"serieDistribuidor"`
+	MemGB string`json:"memGB"`
+	Velocidad string `json:"velocidad"`
+	//HddTipo string `json:"hddTipo"`
+	HddGB string `json:"hddGB"`
+	HddSerie string `json:"hddSerie"`
+	UnidadOpt string`json:"unidadOptica"`
+	FuenteSerie string `json:"fuenteSerie"`
 	Formato string `json:"formato"`
+	Licencia string`json:"licencia"`
+	Comentarios string `json:"comentarios"`
+	//Provedor string `json:"provedor"`
 }
 
 type Monitor struct {
@@ -48,19 +60,25 @@ type Monitor struct {
 	Salida string `json:"salida"`
 }
 type AllInOne struct {
-	IdProducto int`json:"IdAllinOne"`
-	Clase string `json:"class"`
+	IdProducto int`json:"idAllinOne"`
+	Fecha string `json:"fecha"`
+	OC string `json:"oc"`
+	Suc string `json:"sucursal"`
+	Familia string `json:"familia"`
+	Serie string `json:"serie"`
+	SerieOriginal string `json:"serieOriginal"`
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Velocidad string `json:"velocidad"`
 	Generacion string `json:"generacion"`
-	MarcaDisco string `json:"marcaDisco"`
-	Capacidad string `json:"capacidad"`
-	SerieDisco string `json:"serieDisco"`
-	Fuente_Eliminador string `json:"fuente_Eliminador"`
-	Memoria string `json:"memoria"`
-	SerieOriginal string `json:"serieOriginal"`
-	SerieDistribuidor string `json:"serieDistribuidor"`
+	MemGB string`json:"memGB"`
+	Velocidad string `json:"velocidad"`
+	//HddTipo string `json:"hddTipo"`
+	HddGB string `json:"hddGB"`
+	HddSerie string `json:"hddSerie"`
+	UnidadOpt string`json:"unidadOptica"`
+	FuenteSerie string `json:"fuenteSerie"`
 	Pulgadas string `json:"pulgadas"`
+	Licencia string`json:"licencia"`
+	Comentarios string `json:"comentarios"`
 }

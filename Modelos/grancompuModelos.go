@@ -2,31 +2,30 @@ package Modelos
 type Laptop struct {
 	IdProducto int`json:"idLaptop"`
 	Fecha string `json:"fecha"`
-	OC string `json:"oc"`
+	OC int `json:"oc"`
 	Suc string `json:"sucursal"`
 	Familia string `json:"familia"`
-	Serie string `json:"serie"`
-	SerieOriginal string `json:"serieOriginal"`
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Generacion string `json:"generacion"`
-	MemGB string`json:"memGB"`
+	Generacion int `json:"generacion"`
 	Velocidad string `json:"velocidad"`
+	MemGB int`json:"memGB"`
 	//HddTipo string `json:"hddTipo"`
+	SerieBateria string `json:"serieBateria"`
 	HddGB string `json:"hddGB"`
 	HddSerie string `json:"hddSerie"`
-	UnidadOpt string`json:"unidadOptica"`
-	FuenteSerie string `json:"fuenteSerie"`
-	Pulgadas string `json:"pulgadas"`
-	Licencia string`json:"licencia"`
+	SerieOriginal string `json:"serieOriginal"`
+	Pulgadas string`json:"pulgadas"`
+	Camara string `json:"camara"`
+	Eliminador string `json:"eliminador"`
 	Comentarios string `json:"comentarios"`
 }
 
 type Desktop struct {
 	IdProducto int`json:"idDesktop"`
 	Fecha string `json:"fecha"`
-	OC string `json:"oc"`
+	OC int `json:"oc"`
 	Suc string `json:"sucursal"`
 	Familia string `json:"familia"`
 	Serie string `json:"serie"`
@@ -34,7 +33,7 @@ type Desktop struct {
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Generacion string `json:"generacion"`
+	Generacion int `json:"generacion"`
 	MemGB string`json:"memGB"`
 	Velocidad string `json:"velocidad"`
 	//HddTipo string `json:"hddTipo"`
@@ -62,7 +61,7 @@ type Monitor struct {
 type AllInOne struct {
 	IdProducto int`json:"idAllinOne"`
 	Fecha string `json:"fecha"`
-	OC string `json:"oc"`
+	OC int `json:"oc"`
 	Suc string `json:"sucursal"`
 	Familia string `json:"familia"`
 	Serie string `json:"serie"`
@@ -70,8 +69,8 @@ type AllInOne struct {
 	Marca string `json:"marca"`
 	Modelo string`json:"modelo"`
 	Procesador string `json:"procesador"`
-	Generacion string `json:"generacion"`
-	MemGB string`json:"memGB"`
+	Generacion int `json:"generacion"`
+	MemGB int`json:"memGB"`
 	Velocidad string `json:"velocidad"`
 	//HddTipo string `json:"hddTipo"`
 	HddGB string `json:"hddGB"`

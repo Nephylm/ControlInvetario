@@ -4,11 +4,13 @@ import (
 	modelos "ControlInvetario/Modelos"
 	grancompu "ControlInvetario/Utilidades"
 	"fmt"
+	"strconv"
 )
 
 var(
+	Ram string
 	Fecha string
-	OC string
+	OC int
 	Suc string
 	Clase string
 	Existencia int
@@ -17,13 +19,10 @@ var(
 	Marca string
 	Procesador string
 	Velocidad string
-	Generacion string
-	MarcaDisco string
-	Capacidad string
-	SerieDisco string
-	Bateria string
+	Generacion int
+	Camara string
+	SerieBateria string
 	Eliminador string
-	Memoria string
 	SerieOriginal string
 	Serie string
 	SerieDistribuidor string
@@ -31,15 +30,8 @@ var(
 	Pulgadas string
 	Formato string
 	Salida string
-	NumNucleos string
-	TipoRam string
-	MemGB string
-	HddTipo string
-	Unidad string
-	Cargador string
+	MemGB int
 	Licencia string
-	Extras string
-	Provedor string
 	HddGB string
 	Familia string
 	HddSerie string
@@ -50,22 +42,25 @@ var(
 
 
 func Guardar(inventario []grancompu.Item) string {
-
 	for _, item := range inventario{
-		switch item.Producto["clase"] {
-		case "monitor":
-			Monitores(item)
+		switch grancompu.Minusculas(item.Producto["familia"]){
 		case "desktop":
 			Desktop(item)
-		case "allinone":
-			AllinOne(item)
 		case "laptop":
 			Laptops(item)
-		case "disco duro":
-
 		default:
-			return "error"
+			switch item.Producto["clase"] {
+			case "monitor":
+				Monitores(item)
+			case "allinone":
+				AllinOne(item)
+			case "disco duro":
+
+			default:
+				return "error"
+			}
 		}
+
 	}
 	return "Guardado exitoso"
 }
@@ -100,7 +95,7 @@ func Monitores (item grancompu.Item){
 func AllinOne (item grancompu.Item){
 	var AllOne modelos.AllInOne
 	AllOne.Fecha=item.Producto["fecha"]
-	AllOne.OC=item.Producto["oc"]
+	AllOne.OC,_=strconv.Atoi(item.Producto["oc"])
 	AllOne.Suc=item.Producto["suc"]
 	AllOne.Familia=item.Producto["familia"]
 	AllOne.Serie=item.Producto["serie"]
@@ -108,8 +103,8 @@ func AllinOne (item grancompu.Item){
 	AllOne.Marca=item.Producto["marca"]
 	AllOne.Modelo=item.Producto["modelo"]
 	AllOne.Procesador=item.Producto["procesador"]
-	AllOne.Generacion= item.Producto["gen"]
-	AllOne.MemGB=item.Producto["mem/gb"]
+	AllOne.Generacion,_= strconv.Atoi(item.Producto["gen"])
+	AllOne.MemGB,_=strconv.Atoi(item.Producto["mem/gb"])
 	AllOne.Velocidad=item.Producto["vel /ghz"]
 	AllOne.HddGB=item.Producto["hdd/gb"]
 	AllOne.HddSerie=item.Producto["hdd serie"]
@@ -140,34 +135,32 @@ func AllinOne (item grancompu.Item){
 func Laptops (item grancompu.Item){
 	var Laptop modelos.Laptop
 	Laptop.Fecha=item.Producto["fecha"]
-	Laptop.OC=item.Producto["oc"]
+	Laptop.OC,_=strconv.Atoi(item.Producto["oc"])
 	Laptop.Suc=item.Producto["suc"]
 	Laptop.Familia=item.Producto["familia"]
-	Laptop.Serie=item.Producto["serie"]
-	Laptop.SerieOriginal=item.Producto["serie original"]
 	Laptop.Marca=item.Producto["marca"]
 	Laptop.Modelo=item.Producto["modelo"]
-	Laptop.Procesador=item.Producto["procesador"]
-	Laptop.Generacion= item.Producto["gen"]
-	Laptop.MemGB=item.Producto["mem/gb"]
-	Laptop.Velocidad=item.Producto["vel /ghz"]
-	Laptop.HddGB=item.Producto["hdd/gb"]
-	Laptop.HddSerie=item.Producto["hdd serie"]
-	Laptop.UnidadOpt=item.Producto["unidad optica"]
-	Laptop.FuenteSerie=item.Producto["fuente serie"]
+	Laptop.Procesador=item.Producto["procesad"]
+	Laptop.Generacion,_= strconv.Atoi(item.Producto["gen"])
+	Laptop.Velocidad=item.Producto["veloghz"]
+	Laptop.MemGB,_=strconv.Atoi(item.Producto["memgb"])
+	Laptop.SerieBateria=item.Producto["serie bateria"]
+	Laptop.HddGB=item.Producto["disco"]
+	Laptop.HddSerie=item.Producto["serie disco"]
+	Laptop.SerieOriginal=item.Producto["serie original"]
 	Laptop.Pulgadas=item.Producto["pulgadas"]
-	Laptop.Licencia=item.Producto["licencia"]
-	Laptop.Comentarios=item.Producto["comentarios"]
-	stmt, es := db.Prepare("INSERT INTO Laptop (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Prcesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Pulgadas, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Laptop WHERE SerieOriginal=? OR Serie=?);")
+	Laptop.Camara=item.Producto["camara"]
+	Laptop.Eliminador=item.Producto["Eliminador"]
+	//Laptop.Comentarios=item.Producto["comentarios"]
+	stmt, es := db.Prepare("INSERT INTO Laptop (Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador)" +
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Laptop WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(Laptop.Fecha,Laptop.OC,Laptop.Suc,Laptop.Familia,Laptop.Serie,Laptop.SerieOriginal,Laptop.Marca,
-		Laptop.Modelo,Laptop.Procesador, Laptop.Generacion, Laptop.MemGB, Laptop.Velocidad, Laptop.HddGB, Laptop.HddSerie,
-		Laptop.UnidadOpt, Laptop.FuenteSerie, Laptop.Pulgadas, Laptop.Licencia, Laptop.Comentarios,
-		Laptop.SerieOriginal, Laptop.Serie)
+	a, err := stmt.Exec(Laptop.Fecha,Laptop.OC,Laptop.Suc,Laptop.Familia,Laptop.Marca, Laptop.Modelo,Laptop.Procesador, Laptop.Generacion,
+		Laptop.Velocidad, Laptop.MemGB,Laptop.SerieBateria, Laptop.HddGB, Laptop.HddSerie,Laptop.SerieOriginal,
+		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.SerieOriginal)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -180,7 +173,7 @@ func Laptops (item grancompu.Item){
 func Desktop (item grancompu.Item){
 	var Escritorio modelos.Desktop
 	Escritorio.Fecha=item.Producto["fecha"]
-	Escritorio.OC=item.Producto["oc"]
+	Escritorio.OC, _ =strconv.Atoi(item.Producto["oc"])
 	Escritorio.Suc=item.Producto["suc"]
 	Escritorio.Familia=item.Producto["familia"]
 	Escritorio.Serie=item.Producto["serie"]
@@ -188,7 +181,7 @@ func Desktop (item grancompu.Item){
 	Escritorio.Marca=item.Producto["marca"]
 	Escritorio.Modelo=item.Producto["modelo"]
 	Escritorio.Procesador=item.Producto["procesador"]
-	Escritorio.Generacion= item.Producto["gen"]
+	Escritorio.Generacion,_= strconv.Atoi(item.Producto["gen"])
 	Escritorio.MemGB=item.Producto["mem/gb"]
 	Escritorio.Velocidad=item.Producto["vel /ghz"]
 	Escritorio.HddGB=item.Producto["hdd/gb"]
@@ -198,7 +191,7 @@ func Desktop (item grancompu.Item){
 	Escritorio.Formato=item.Producto["formato"]
 	Escritorio.Licencia=item.Producto["licencia"]
 	Escritorio.Comentarios=item.Producto["comentarios"]
-	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Prcesador, Generacion, Mem_GB," +
+	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios)" +
 		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE SerieOriginal=? OR Serie=?);")
 	if es != nil {
@@ -302,63 +295,62 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
-	listado, _ := db.Query("SELECT Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		"Velocidad, HDD, HddSerie, UnidadOp, Fuente, Pulgadas, Licencia, Comentarios FROM Laptop;")
+	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
+			&IdProducto,
 			&Fecha,
 			&OC,
 			&Suc,
 			&Familia,
-			&Serie,
-			&SerieOriginal,
 			&Marca,
 			&Modelo,
 			&Procesador,
 			&Generacion,
-			&MemGB,
 			&Velocidad,
+			&MemGB,
+			&SerieBateria,
 			&HddGB,
 			&HddSerie,
-			&UnidadOp,
-			&Fuente,
+			&SerieOriginal,
 			&Pulgadas,
-			&Licencia,
-			&Comentarios,
+			&Camara,
+			&Eliminador,
 		)
 		revisarError(err)
 		Data =  append(Data, modelos.Laptop{
+			IdProducto: IdProducto,
 			Fecha: Fecha,
 			OC: OC,
 			Suc: Suc,
 			Familia: Familia,
-			Serie: Serie,
-			SerieOriginal: SerieOriginal,
 			Marca: Marca,
 			Modelo: Modelo,
 			Procesador: Procesador,
 			Generacion: Generacion,
-			MemGB: MemGB,
 			Velocidad: Velocidad,
+			MemGB: MemGB,
+			SerieBateria: SerieBateria,
 			HddGB: HddGB,
 			HddSerie: HddSerie,
-			UnidadOpt: UnidadOp,
-			FuenteSerie: Fuente,
+			SerieOriginal: SerieOriginal,
 			Pulgadas: Pulgadas,
-			Licencia: Licencia,
-			Comentarios: Comentarios,
+			Camara: Camara,
+			Eliminador: Eliminador,
 		})
 	}
 	return
 }
 //Recupera las computadoras de escritoria de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		"Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios FROM Desktop;")
+	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
+		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios FROM Desktop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
+			&IdProducto,
 			&Fecha,
 			&OC,
 			&Suc,
@@ -369,7 +361,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			&Modelo,
 			&Procesador,
 			&Generacion,
-			&MemGB,
+			&Ram,
 			&Velocidad,
 			&HddGB,
 			&HddSerie,
@@ -381,6 +373,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 		)
 		revisarError(err)
 		Data =  append(Data, modelos.Desktop{
+			IdProducto: IdProducto,
 			Fecha: Fecha,
 			OC: OC,
 			Suc: Suc,
@@ -391,7 +384,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			Modelo: Modelo,
 			Procesador: Procesador,
 			Generacion: Generacion,
-			MemGB: MemGB,
+			MemGB: Ram,
 			Velocidad: Velocidad,
 			HddGB: HddGB,
 			HddSerie: HddSerie,

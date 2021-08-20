@@ -10,7 +10,8 @@ import (
 	"os"
 )
 
-func Peticion()  {
+// Recupera de api los productos
+func Peticion() {
 	response, err := http.Get("http://74.208.31.248:8086/api/productos")
 
 	if err != nil {
@@ -22,14 +23,15 @@ func Peticion()  {
 	if err != nil {
 		log.Fatal(err)
 	}
-	res:=string(responseData)
+	res := string(responseData)
 	fmt.Println(res)
 	//var respuesta []map[string]interface{}
 	var respuesta []modelos.Producto
-	json.Unmarshal(responseData,&respuesta)
+	json.Unmarshal(responseData, &respuesta)
 	fmt.Println(respuesta)
 }
 
+// Recupera de api los insumos
 func GetInsumos() (LInsumos []modelos.Insumo) {
 	response, err := http.Get("http://74.208.31.248:8086/insumos")
 
@@ -46,10 +48,12 @@ func GetInsumos() (LInsumos []modelos.Insumo) {
 	//res:=string(responseData)
 	//fmt.Println(res)
 	//var respuesta []map[string]interface{}
-	json.Unmarshal(responseData,&LInsumos)
+	json.Unmarshal(responseData, &LInsumos)
 	fmt.Println(LInsumos)
 	return LInsumos
 }
+
+// Recupera de api los productos
 func GetProductos() (LProductos []modelos.IdProducto) {
 	response, err := http.Get("http://74.208.31.248:8086/api/productos")
 	var LisProductos []modelos.Producto
@@ -61,19 +65,21 @@ func GetProductos() (LProductos []modelos.IdProducto) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(responseData,&LisProductos)
-	for _,producto:=range LisProductos{
-		LProductos= append(LProductos,modelos.IdProducto{
-			IdProducto: producto.IdProducto,
+	json.Unmarshal(responseData, &LisProductos)
+	for _, producto := range LisProductos {
+		LProductos = append(LProductos, modelos.IdProducto{
+			IdProducto:     producto.IdProducto,
 			NombreProducto: producto.Nombre,
-			Activo: 1,
+			Activo:         1,
 		})
 	}
 	fmt.Println(LProductos)
 	return LProductos
 }
+
+// Recupera de api los productos por insumo en base a su id de producto
 func GetInsumosxProducto(IdProducto string) (InsumosxProducto []modelos.InsumoxProducto) {
-	response, err := http.Get("http://74.208.31.248:8086/api/insumosxproducto/"+IdProducto)
+	response, err := http.Get("http://74.208.31.248:8086/api/insumosxproducto/" + IdProducto)
 	var LisInsumosxProducto []modelos.InsumoxProducto
 	if err != nil {
 		fmt.Print(err.Error())
@@ -83,7 +89,7 @@ func GetInsumosxProducto(IdProducto string) (InsumosxProducto []modelos.InsumoxP
 	if err != nil {
 		log.Fatal(err)
 	}
-	json.Unmarshal(responseData,&LisInsumosxProducto)
+	json.Unmarshal(responseData, &LisInsumosxProducto)
 
 	fmt.Println(LisInsumosxProducto)
 	return LisInsumosxProducto

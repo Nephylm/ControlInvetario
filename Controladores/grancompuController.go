@@ -11,7 +11,7 @@ import (
 func Guardar(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 20)
 	Archivo, _, err := r.FormFile("file")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	//items:=utilidades.ReadXlsx(Archivo)
@@ -39,10 +39,10 @@ func ObteneAllione(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bd.GetAllInOne())
 }
 
-func GetListaExel(w http.ResponseWriter, req *http.Request){
+func GetListaExel(w http.ResponseWriter, req *http.Request) {
 	req.ParseMultipartForm(32 << 20)
 	Archivo, _, err := req.FormFile("file")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	utilidades.ReadXlsx1(Archivo)
@@ -51,13 +51,13 @@ func GetListaExel(w http.ResponseWriter, req *http.Request){
 }
 func GuardarUno(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//crea item y arrai de itmes
+	//crea item y array de items
 	var items []utilidades.Item
 	var item utilidades.Item
 	//des serializa el json a un map
 	json.NewDecoder(r.Body).Decode(&item.Producto)
 	fmt.Println(item)
-	items=append(items,item)
+	items = append(items, item)
 	//guarda el producto
 	json.NewEncoder(w).Encode(bd.Guardar(items))
 }
@@ -66,10 +66,10 @@ func Pruebas(w http.ResponseWriter, r *http.Request) {
 	utilidades.GetInsumos()
 	json.NewEncoder(w).Encode("ALGO")
 }
-func Upload(w http.ResponseWriter, req *http.Request){
+func Upload(w http.ResponseWriter, req *http.Request) {
 	req.ParseMultipartForm(32 << 20)
 	Archivo, _, err := req.FormFile("file")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	//fmt.Println(nombre)

@@ -29,9 +29,9 @@ func ActualizarInsumo(w http.ResponseWriter, r *http.Request) {
 }
 func AgregarDetalles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var Detalles modelos.Detalles
-	json.NewDecoder(r.Body).Decode(&Detalles)
-	resp := bd.AgregraDetalleP(Detalles)
+	var ProducoT modelos.ProductoTerminado
+	json.NewDecoder(r.Body).Decode(&ProducoT)
+	resp := bd.AgregraDetalleP(ProducoT)
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }

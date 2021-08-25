@@ -66,7 +66,6 @@ type UnidadDMedida struct {
 type ProductoTerminado struct {
 	Id_PTerminado   int `json:"id_pterminado"`
 	Producto        int `json:"producto"`
-	OrdenProduccion int `json:"ordenProduccion"`
 	Existencia      int `json:"existencia"`
 }
 

@@ -185,11 +185,11 @@ func EliminnarInsumo(Insumo modelos.InventarioInsumos) (resp modelos.RespuestaSe
 //PRODUCTO TERMINADO
 //Registra un producto terminado
 func AgregarPTerminado(productoT modelos.ProductoTerminado) (resp modelos.RespuestaSencilla) {
-	stmt, es := db.Prepare("INSERT INTO Chocolates (IdProducto,IdRegistro, Existencia) VALUES (?,?,?);")
+	stmt, es := db.Prepare("INSERT INTO Chocolates (IdProducto, Existencia) VALUES (?,?,?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(productoT.Producto, productoT.OrdenProduccion, productoT.Existencia)
+	a, err := stmt.Exec(productoT.Producto, productoT.Existencia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -238,7 +238,7 @@ func GetPTerminado(idRegistro int) (Data []modelos.ProductoTerminado) {
 		Data = append(Data, modelos.ProductoTerminado{
 			Id_PTerminado:   Id_PTerminado,
 			Producto:        IdProducto,
-			OrdenProduccion: idRegistro,
+
 		})
 	}
 	return
@@ -272,11 +272,10 @@ func AgregarProductosOrden(productoOrden modelos.ProductosOrden) (resp modelos.R
 		}
 		productoT = modelos.ProductoTerminado{
 			Producto:        Id,
-			OrdenProduccion: GetIdProductosOrden(productoOrden),
 			Existencia:      ContadorProductos(Id),
 		}
-		AgregarPTerminado(productoT)
-		ReducirInsumo(strconv.Itoa(Id))
+		AgregraDetalleP(productoT)
+		ReducirInsumo(strconv.Itoa(Id),productoOrden.Existencia)
 		return
 	}
 	resp.CodigoRespHTTP = 400
@@ -352,14 +351,11 @@ func ActualizarProductosOrden(productoOrden modelos.ProductosOrden) (resp modelo
 	id := productoOrden.IdProducto
 	productoT := modelos.ProductoTerminado{
 		Producto:        id,
-		OrdenProduccion: GetIdProductosOrden(productoOrden),
 		Existencia:      ContadorProductos(id),
 	}
+	AgregraDetalleP(productoT)
 	if anterior.Existencia < productoOrden.Existencia {
-		AgregarPTerminado(productoT)
-		ReducirInsumo(strconv.Itoa(id))
-	} else if anterior.Existencia > productoOrden.Existencia {
-
+		ReducirInsumo(strconv.Itoa(id),productoOrden.Existencia-anterior.Existencia)
 	}
 	revisarError(err)
 	affected, _ := a.RowsAffected()
@@ -544,23 +540,23 @@ func GetIdProductos() (Data []modelos.IdProducto, resp modelos.RespuestaSencilla
 }
 
 // Método para reducir los insumos que se van consumiendo y se usa ActualizarInsumo()
-func ReducirInsumo(IdProducto string) {
+func ReducirInsumo(IdProducto string, cant int) {
 	insumosxProducto := utilidades.GetInsumosxProducto(IdProducto)
 	for _, insumoXProducto := range insumosxProducto {
 		insumo, _ := GetInsumo(insumoXProducto.Insumo.Nombre)
 		cantidad := insumo.Existencia
-		usado := insumoXProducto.CantidadUsada
+		usado := insumoXProducto.CantidadUsada*cant
 		insumo.Existencia = cantidad - usado
 		ActualizarInsumo(insumo)
 	}
 }
-func AgregraDetalleP(DetalleP modelos.Detalles) (resp modelos.RespuestaSencilla) {
-	stmt, es := db.Prepare("INSERT INTO DetalleProducto (IdProducto,Inventario)" +
-		" SELECT ?,?  WHERE NOT EXISTS (SELECT *FROM DetalleProducto WHERE IdProducto=?);")
+func AgregraDetalleP(ProductoT modelos.ProductoTerminado) (resp modelos.RespuestaSencilla) {
+	stmt, es := db.Prepare("INSERT INTO Chocolates (IdProducto,Existencia)" +
+		" SELECT ?,?  WHERE NOT EXISTS (SELECT *FROM Chocolates WHERE IdProducto=?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(DetalleP.IdProducto, DetalleP.Inventario, DetalleP.IdProducto)
+	a, err := stmt.Exec(ProductoT.Producto, ProductoT.Existencia, ProductoT.Producto)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -570,11 +566,11 @@ func AgregraDetalleP(DetalleP modelos.Detalles) (resp modelos.RespuestaSencilla)
 
 		return
 	} else {
-		stmt, es := db.Prepare("UPDATE DetalleProducto SET Inventario=? WHERE IdProducto=?;")
+		stmt, es := db.Prepare("UPDATE Chocolates SET Existencia=? WHERE IdProducto=?;")
 		if es != nil {
 			panic(es.Error())
 		}
-		_, err := stmt.Exec(DetalleP.Inventario, DetalleP.IdProducto)
+		_, err := stmt.Exec(ProductoT.Existencia,ProductoT.Producto)
 		revisarError(err)
 		if affected > 0 {
 			resp.CodigoRespHTTP = 200

@@ -24,13 +24,15 @@ var (
 	SerieBateria      string
 	Eliminador        string
 	SerieOriginal     string
-	Serie             string
+	Serie             int
+	SerieDesktop      string
 	SerieDistribuidor string
 	Tipo              string
 	Pulgadas          string
 	Formato           string
 	Salida            string
-	MemGB             int
+	MemGB             string
+	MemGBLaptop       int
 	Licencia          string
 	HddGB             string
 	Familia           string
@@ -97,32 +99,33 @@ func AllinOne(item grancompu.Item) {
 	var AllOne modelos.AllInOne
 	AllOne.Fecha = item.Producto["fecha"]
 	AllOne.OC, _ = strconv.Atoi(item.Producto["oc"])
-	AllOne.Suc = item.Producto["suc"]
+	AllOne.SUC = item.Producto["suc"]
 	AllOne.Familia = item.Producto["familia"]
-	AllOne.Serie = item.Producto["serie"]
+	AllOne.Serie, _ = strconv.Atoi(item.Producto["serie"])
 	AllOne.SerieOriginal = item.Producto["serie original"]
 	AllOne.Marca = item.Producto["marca"]
 	AllOne.Modelo = item.Producto["modelo"]
 	AllOne.Procesador = item.Producto["procesador"]
-	AllOne.Generacion, _ = strconv.Atoi(item.Producto["gen"])
-	AllOne.MemGB, _ = strconv.Atoi(item.Producto["mem/gb"])
+	AllOne.Gen, _ = strconv.Atoi(item.Producto["gen"])
+	AllOne.Mem_GB, _ = item.Producto["mem/gb"]
 	AllOne.Velocidad = item.Producto["vel /ghz"]
-	AllOne.HddGB = item.Producto["hdd/gb"]
+	AllOne.HDD = item.Producto["hdd/gb"]
 	AllOne.HddSerie = item.Producto["hdd serie"]
-	AllOne.UnidadOpt = item.Producto["unidad optica"]
-	AllOne.FuenteSerie = item.Producto["fuente serie"]
+	AllOne.UnidadOp = item.Producto["unidad optica"]
+	AllOne.Fuente = item.Producto["fuente serie"]
+	AllOne.Formato = item.Producto["formato"]
 	AllOne.Pulgadas = item.Producto["pulgadas"]
 	AllOne.Licencia = item.Producto["licencia"]
 	AllOne.Comentarios = item.Producto["comentarios"]
-	stmt, es := db.Prepare("INSERT INTO AllinOne (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Prcesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Pulgadas, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE SerieOriginal=? OR Serie=?);")
+	stmt, es := db.Prepare("INSERT INTO AllinOne (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Gen, Mem_GB," +
+		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Pulgadas, Licencia, Comentarios)" +
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE SerieOriginal=? OR Serie=?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(AllOne.Fecha, AllOne.OC, AllOne.Suc, AllOne.Familia, AllOne.Serie, AllOne.SerieOriginal, AllOne.Marca,
-		AllOne.Modelo, AllOne.Procesador, AllOne.Generacion, AllOne.MemGB, AllOne.Velocidad, AllOne.HddGB, AllOne.HddSerie,
-		AllOne.UnidadOpt, AllOne.FuenteSerie, AllOne.Pulgadas, AllOne.Licencia, AllOne.Comentarios,
+	a, err := stmt.Exec(AllOne.Fecha, AllOne.OC, AllOne.SUC, AllOne.Familia, AllOne.Serie, AllOne.SerieOriginal, AllOne.Marca,
+		AllOne.Modelo, AllOne.Procesador, AllOne.Gen, AllOne.Mem_GB, AllOne.Velocidad, AllOne.HDD, AllOne.HddSerie,
+		AllOne.UnidadOp, AllOne.Fuente, AllOne.Formato, AllOne.Pulgadas, AllOne.Licencia, AllOne.Comentarios,
 		AllOne.SerieOriginal, AllOne.Serie)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
@@ -245,8 +248,8 @@ func GetMonitores() (Data []modelos.Monitor) {
 
 //Recupera las computadoras all in one de la base de datos
 func GetAllInOne() (Data []modelos.AllInOne) {
-	listado, _ := db.Query("SELECT Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		"Velocidad, HDD, HddSerie, UnidadOp, Fuente, Pulgadas, Licencia, Comentarios FROM AllinOne;")
+	listado, _ := db.Query("SELECT Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Gen, Mem_GB," +
+		"Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Pulgadas, Licencia, Comentarios FROM AllinOne;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -266,6 +269,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 			&HddSerie,
 			&UnidadOp,
 			&Fuente,
+			&Formato,
 			&Pulgadas,
 			&Licencia,
 			&Comentarios,
@@ -274,20 +278,21 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 		Data = append(Data, modelos.AllInOne{
 			Fecha:         Fecha,
 			OC:            OC,
-			Suc:           Suc,
+			SUC:           Suc,
 			Familia:       Familia,
 			Serie:         Serie,
 			SerieOriginal: SerieOriginal,
 			Marca:         Marca,
 			Modelo:        Modelo,
 			Procesador:    Procesador,
-			Generacion:    Generacion,
-			MemGB:         MemGB,
+			Gen:           Generacion,
+			Mem_GB:        MemGB,
 			Velocidad:     Velocidad,
-			HddGB:         HddGB,
+			HDD:           HddGB,
 			HddSerie:      HddSerie,
-			UnidadOpt:     UnidadOp,
-			FuenteSerie:   Fuente,
+			UnidadOp:      UnidadOp,
+			Fuente:        Fuente,
+			Formato:       Formato,
 			Pulgadas:      Pulgadas,
 			Licencia:      Licencia,
 			Comentarios:   Comentarios,
@@ -299,7 +304,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop;")
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Comentarios FROM Laptop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -321,6 +326,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&Pulgadas,
 			&Camara,
 			&Eliminador,
+			&Comentarios,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Laptop{
@@ -334,7 +340,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Procesador:    Procesador,
 			Generacion:    Generacion,
 			Velocidad:     Velocidad,
-			MemGB:         MemGB,
+			MemGB:         MemGBLaptop,
 			SerieBateria:  SerieBateria,
 			HddGB:         HddGB,
 			HddSerie:      HddSerie,
@@ -342,6 +348,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Pulgadas:      Pulgadas,
 			Camara:        Camara,
 			Eliminador:    Eliminador,
+			Comentarios:   Comentarios,
 		})
 	}
 	return
@@ -382,7 +389,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			OC:            OC,
 			Suc:           Suc,
 			Familia:       Familia,
-			Serie:         Serie,
+			Serie:         SerieDesktop,
 			SerieOriginal: SerieOriginal,
 			Marca:         Marca,
 			Modelo:        Modelo,

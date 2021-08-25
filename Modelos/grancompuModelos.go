@@ -68,22 +68,22 @@ type AllInOne struct {
 	IdProducto    int    `json:"idAllinOne"`
 	Fecha         string `json:"fecha"`
 	OC            int    `json:"oc"`
-	Suc           string `json:"sucursal"`
+	SUC           string `json:"sucursal"`
 	Familia       string `json:"familia"`
-	Serie         string `json:"serie"`
+	Serie         int    `json:"serie"`
 	SerieOriginal string `json:"serieOriginal"`
 	Marca         string `json:"marca"`
 	Modelo        string `json:"modelo"`
 	Procesador    string `json:"procesador"`
-	Generacion    int    `json:"generacion"`
-	MemGB         int    `json:"memGB"`
+	Gen           int    `json:"generacion"`
+	Mem_GB        string `json:"memGB"`
 	Velocidad     string `json:"velocidad"`
-	//HddTipo string `json:"hddTipo"`
-	HddGB       string `json:"hddGB"`
-	HddSerie    string `json:"hddSerie"`
-	UnidadOpt   string `json:"unidadOptica"`
-	FuenteSerie string `json:"fuenteSerie"`
-	Pulgadas    string `json:"pulgadas"`
-	Licencia    string `json:"licencia"`
-	Comentarios string `json:"comentarios"`
+	HDD           string `json:"hdd"`
+	HddSerie      string `json:"hddSerie"`
+	UnidadOp      string `json:"unidadOptica"`
+	Fuente        string `json:"fuenteSerie"`
+	Formato       string `json:"formato"`
+	Pulgadas      string `json:"pulgadas"`
+	Licencia      string `json:"licencia"`
+	Comentarios   string `json:"comentarios"`
 }

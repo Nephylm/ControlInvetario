@@ -48,6 +48,7 @@ func Guardar(inventario []grancompu.Item) string {
 		case "desktop":
 			Desktop(item)
 		case "laptop":
+			fmt.Println("laptop")
 			Laptops(item)
 		default:
 			switch item.Producto["clase"] {

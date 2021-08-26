@@ -146,7 +146,7 @@ func ReadXlsx(Archivo multipart.File) []Item {
 				break
 			}
 			if j < len(campos) {
-				if campos[j] != "" {
+			if campos[j] != "" {
 
 					item.Producto[Minusculas(campos[j])] = Minusculas(colCell)
 
@@ -155,7 +155,7 @@ func ReadXlsx(Archivo multipart.File) []Item {
 				break
 			}
 		}
-		if item.Producto[Minusculas(campos[0])] != "" {
+		if item.Producto["familia"] != "" || item.Producto["clase"] != "" {
 			item.Contador = n
 			items = append(items, item)
 			item.Producto = make(map[string]string)

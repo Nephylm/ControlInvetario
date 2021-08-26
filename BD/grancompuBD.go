@@ -365,7 +365,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			&OC,
 			&Suc,
 			&Familia,
-			&Serie,
+			&SerieDesktop,
 			&SerieOriginal,
 			&Marca,
 			&Modelo,

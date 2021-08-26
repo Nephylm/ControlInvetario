@@ -305,7 +305,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Comentarios FROM Laptop;")
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -327,7 +327,6 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&Pulgadas,
 			&Camara,
 			&Eliminador,
-			&Comentarios,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Laptop{
@@ -349,7 +348,6 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Pulgadas:      Pulgadas,
 			Camara:        Camara,
 			Eliminador:    Eliminador,
-			Comentarios:   Comentarios,
 		})
 	}
 	return

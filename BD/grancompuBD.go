@@ -305,7 +305,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop;")
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -356,7 +356,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 //Recupera las computadoras de escritoria de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
 	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios FROM Desktop;")
+		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios FROM Desktop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -472,6 +472,94 @@ func GetItem(elme grancompu.Elemento) (Data grancompu.Elemento) {
 			Modelo:     Modelo,
 			IdProducto: IdProducto,
 		}
+	}
+	return
+}
+
+func BajaLaptop(Laptop modelos.Laptop)(resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Laptop SET Activo=0 WHERE IdLaptop=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Laptop.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Baja exitosa"
+		fmt.Println("Baja exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al dar de baja"
+		fmt.Println("Error al dar de baja")
+	}
+	return
+}
+func BajaDesktop(Desktop modelos.Desktop)(resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Desktop SET Activo=0 WHERE IdDesktop=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Desktop.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Baja exitosa"
+		fmt.Println("Baja exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al dar de baja"
+		fmt.Println("Error al dar de baja")
+	}
+	return
+}
+
+func ActualizaLaptop(Laptop modelos.Laptop)(resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Laptop SET Fecha=?, OC=?, SUC=?, Familia=?, Marca=?, Modelo=?, Procesador=?, Generacion=?,Velocidad=?, " +
+		"Mem_GB=?,SerieBateria=? , HDD=?, HddSerie=?, SerieOriginal=?, Pulgadas=?, Camara=?, Eliminador=? WHERE IdLaptop=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
+		Laptop.Velocidad, Laptop.MemGB, Laptop.SerieBateria, Laptop.HddGB, Laptop.HddSerie, Laptop.SerieOriginal,
+		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador,Laptop.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Actualizacion exitosa"
+		fmt.Println("Actualizacion exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al Actualizar"
+		fmt.Println("Error al Actualizar")
+	}
+	return
+}
+func ActualizaDesktop(Desktop modelos.Desktop)(resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Desktop SET Fecha=?, OC=?, SUC=?, Familia=?, Serie=?, SerieOriginal=?, Marca=?, Modelo=?, Procesador=?," +
+		"Generacion=?, Mem_GB=?,Velocidad=?, HDD=?, HddSerie=?, UnidadOp=?, Fuente=?, Formato=?, Licencia=?, Comentarios=? WHERE IdDesktop=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Desktop.Fecha, Desktop.OC, Desktop.Suc, Desktop.Familia, Desktop.Serie, Desktop.SerieOriginal, Desktop.Marca,
+		Desktop.Modelo, Desktop.Procesador, Desktop.Generacion, Desktop.MemGB, Desktop.Velocidad, Desktop.HddGB, Desktop.HddSerie,
+		Desktop.UnidadOpt, Desktop.FuenteSerie, Desktop.Formato, Desktop.Licencia, Desktop.Comentarios, Desktop.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Actualizacion exitosa"
+		fmt.Println("Actualizacion exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al Actualizar"
+		fmt.Println("Error al Actualizar")
 	}
 	return
 }

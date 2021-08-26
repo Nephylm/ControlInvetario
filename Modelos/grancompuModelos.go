@@ -21,7 +21,8 @@ type Laptop struct {
 	Pulgadas      string `json:"pulgadas"`
 	Camara        string `json:"camara"`
 	Eliminador    string `json:"eliminador"`
-	Comentarios   string `json:"comentarios"`
+	//Comentarios   string `json:"comentarios"`
+	Activo int `json:"activo"`
 }
 
 //Estructura de Desktop
@@ -47,6 +48,7 @@ type Desktop struct {
 	Formato     string `json:"formato"`
 	Licencia    string `json:"licencia"`
 	Comentarios string `json:"comentarios"`
+	Activo int `json:"activo"`
 	//Provedor string `json:"provedor"`
 }
 

@@ -2,6 +2,7 @@ package Controladores
 
 import (
 	bd "ControlInvetario/BD"
+	modelos "ControlInvetario/Modelos"
 	utilidades "ControlInvetario/Utilidades"
 	"encoding/json"
 	"fmt"
@@ -76,4 +77,48 @@ func Upload(w http.ResponseWriter, req *http.Request) {
 	//fmt.Println(r)
 	utilidades.ReadXlsx1(Archivo)
 	json.NewEncoder(w).Encode("archivo recibido")
+}
+func BajaDesktop(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Desktop modelos.Desktop
+	//des serializa el json a una estructura de Laptop
+	json.NewDecoder(r.Body).Decode(&Desktop)
+	fmt.Println(Desktop)
+	resp:=bd.BajaDesktop(Desktop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
+func BajaLaptop(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Laptop modelos.Laptop
+	//des serializa el json a una estructura de Laptop
+	json.NewDecoder(r.Body).Decode(&Laptop)
+	fmt.Println(Laptop)
+	resp:=bd.BajaLaptop(Laptop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
+func ActualizaDesktop(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Desktop modelos.Desktop
+	//des serializa el json a una estructura de Laptop
+	json.NewDecoder(r.Body).Decode(&Desktop)
+	fmt.Println(Desktop)
+	resp:=bd.ActualizaDesktop(Desktop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
+func ActualizaLaptop(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Laptop modelos.Laptop
+	//des serializa el json a una estructura de Laptop
+	json.NewDecoder(r.Body).Decode(&Laptop)
+	fmt.Println(Laptop)
+	resp:=bd.ActualizaLaptop(Laptop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
 }

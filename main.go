@@ -54,6 +54,13 @@ func api() {
 	gorillaRoute.HandleFunc("/GetLaptops", grancompuC.ObteneLaptops).Methods("GET")
 
 
+	gorillaRoute.HandleFunc("/BajaLaptop", grancompuC.BajaLaptop).Methods("POST")
+	gorillaRoute.HandleFunc("/BajaDesktop", grancompuC.BajaDesktop).Methods("POST")
+
+	gorillaRoute.HandleFunc("/ActualizaLaptop", grancompuC.ActualizaLaptop).Methods("POST")
+	gorillaRoute.HandleFunc("/ActualizaDesktop", grancompuC.ActualizaDesktop).Methods("POST")
+
+
 	//INVENTARIO CHOCOLATES
 	//Aztualiza datos faltantes de insumo
 	gorillaRoute.HandleFunc("/ActualizarInsumo", grancompuC.ActualizarInsumo).Methods("POST")

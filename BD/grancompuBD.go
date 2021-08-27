@@ -305,7 +305,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador FROM Laptop WHERE Activo=1;")
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -327,6 +327,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&Pulgadas,
 			&Camara,
 			&Eliminador,
+			&Activo,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Laptop{
@@ -348,6 +349,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Pulgadas:      Pulgadas,
 			Camara:        Camara,
 			Eliminador:    Eliminador,
+			Activo: Activo,
 		})
 	}
 	return
@@ -356,7 +358,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 //Recupera las computadoras de escritoria de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
 	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios FROM Desktop WHERE Activo=1;")
+		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios,Activo FROM Desktop;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -380,6 +382,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			&Formato,
 			&Licencia,
 			&Comentarios,
+			&Activo,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Desktop{
@@ -403,6 +406,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			Formato:       Formato,
 			Licencia:      Licencia,
 			Comentarios:   Comentarios,
+			Activo: Activo,
 		})
 	}
 	return

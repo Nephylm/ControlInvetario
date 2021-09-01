@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	Final			  string
 	Ram               string
 	Fecha             string
 	OC                int
@@ -156,7 +157,7 @@ func Laptops(item grancompu.Item) {
 	Laptop.SerieOriginal = item.Producto["serie original"]
 	Laptop.Pulgadas = item.Producto["pulgadas"]
 	Laptop.Camara = item.Producto["camara"]
-	Laptop.Eliminador = item.Producto["Eliminador"]
+	Laptop.Eliminador = item.Producto["eliminador"]
 	//Laptop.Comentarios=item.Producto["comentarios"]
 	stmt, es := db.Prepare("INSERT INTO Laptop (Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
 		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador)" +
@@ -198,9 +199,14 @@ func Desktop(item grancompu.Item) {
 	Escritorio.Formato = item.Producto["formato"]
 	Escritorio.Licencia = item.Producto["licencia"]
 	Escritorio.Comentarios = item.Producto["comentarios"]
+	if Escritorio.Serie=="" || Escritorio.Serie=="ok"{
+		Final="SerieOriginal=? AND Serie=?);"
+	}else {
+		Final="SerieOriginal=? OR Serie=?);"
+	}
 	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE SerieOriginal=? OR Serie=?);")
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE "+Final)
 	if es != nil {
 		panic(es.Error())
 	}
@@ -319,7 +325,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&Procesador,
 			&Generacion,
 			&Velocidad,
-			&MemGB,
+			&MemGBLaptop,
 			&SerieBateria,
 			&HddGB,
 			&HddSerie,

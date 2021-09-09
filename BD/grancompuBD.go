@@ -41,6 +41,7 @@ var (
 	UnidadOp          string
 	Fuente            string
 	Comentarios       string
+	FechaVent         []uint8
 )
 
 func Guardar(inventario []grancompu.Item) string {
@@ -311,7 +312,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 //Recupera las laptops de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
 	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop;")
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -356,6 +357,63 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Camara:        Camara,
 			Eliminador:    Eliminador,
 			Activo: Activo,
+		})
+	}
+
+	Data = append(Data,GetLaptopInactiva()...)
+	return
+}
+//Recupera las laptops de la base de datos
+func GetLaptopInactiva() (Data []modelos.Laptop) {
+	PQuery:="SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo, FechaVent FROM Laptop WHERE Activo=0;"
+	listado, _ := db.Query(PQuery)
+	revisarError(err)
+	for listado.Next() {
+		err = listado.Scan(
+			&IdProducto,
+			&Fecha,
+			&OC,
+			&Suc,
+			&Familia,
+			&Marca,
+			&Modelo,
+			&Procesador,
+			&Generacion,
+			&Velocidad,
+			&MemGBLaptop,
+			&SerieBateria,
+			&HddGB,
+			&HddSerie,
+			&SerieOriginal,
+			&Pulgadas,
+			&Camara,
+			&Eliminador,
+			&Activo,
+			&FechaVent,
+		)
+		revisarError(err)
+		Data = append(Data, modelos.Laptop{
+			IdProducto:    IdProducto,
+			Fecha:         Fecha,
+			OC:            OC,
+			Suc:           Suc,
+			Familia:       Familia,
+			Marca:         Marca,
+			Modelo:        Modelo,
+			Procesador:    Procesador,
+			Generacion:    Generacion,
+			Velocidad:     Velocidad,
+			MemGB:         MemGBLaptop,
+			SerieBateria:  SerieBateria,
+			HddGB:         HddGB,
+			HddSerie:      HddSerie,
+			SerieOriginal: SerieOriginal,
+			Pulgadas:      Pulgadas,
+			Camara:        Camara,
+			Eliminador:    Eliminador,
+			Activo: Activo,
+			FechaVent: string(FechaVent) ,
 		})
 	}
 	return
@@ -487,8 +545,7 @@ func GetItem(elme grancompu.Elemento) (Data grancompu.Elemento) {
 }
 
 func BajaLaptop(Laptop modelos.Laptop)(resp modelos.RespuestaSencilla) {
-
-	stmt, es := db.Prepare("UPDATE Laptop SET Activo=0 WHERE IdLaptop=?;")
+	stmt, es := db.Prepare("UPDATE Laptop SET Activo=0, FechaVent=CURDATE() WHERE IdLaptop=?;")
 	if es != nil {
 		panic(es.Error())
 	}

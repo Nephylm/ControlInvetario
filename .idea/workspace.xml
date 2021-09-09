@@ -25,7 +25,7 @@
     <list default="true" id="c76a0b74-4b72-48cd-b816-64d2866e32e5" name="Default Changelist" comment="Correcciones">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BD/grancompuBD.go" beforeDir="false" afterPath="$PROJECT_DIR$/BD/grancompuBD.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ejemplo Laptops.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/Ejemplo Laptops.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Modelos/grancompuModelos.go" beforeDir="false" afterPath="$PROJECT_DIR$/Modelos/grancompuModelos.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,6 +148,18 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/BD/grancompuBD.go</url>
+          <line>395</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/BD/grancompuBD.go</url>
+          <line>362</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="DlvErrorBreakpoint" />
       </default-breakpoints>
@@ -156,6 +168,7 @@
       <configuration name="GoApplicationRunConfiguration">
         <watch expression="*(*&quot;bool&quot;)(824634074729)" />
         <watch expression="campos" />
+        <watch expression="*(*&quot;string&quot;)(824635225520)" />
       </configuration>
     </watches-manager>
   </component>

@@ -23,6 +23,7 @@ type Laptop struct {
 	Eliminador    string `json:"eliminador"`
 	//Comentarios   string `json:"comentarios"`
 	Activo int `json:"activo"`
+	FechaVent string `json:"fechaVent"`
 }
 
 //Estructura de Desktop

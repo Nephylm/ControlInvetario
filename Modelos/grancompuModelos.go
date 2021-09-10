@@ -22,7 +22,7 @@ type Laptop struct {
 	Camara        string `json:"camara"`
 	Eliminador    string `json:"eliminador"`
 	//Comentarios   string `json:"comentarios"`
-	Activo int `json:"activo"`
+	Activo    int    `json:"activo"`
 	FechaVent string `json:"fechaVent"`
 }
 
@@ -49,7 +49,8 @@ type Desktop struct {
 	Formato     string `json:"formato"`
 	Licencia    string `json:"licencia"`
 	Comentarios string `json:"comentarios"`
-	Activo int `json:"activo"`
+	Activo      int    `json:"activo"`
+	FechaVent   string `json:"fechaVent"`
 	//Provedor string `json:"provedor"`
 }
 

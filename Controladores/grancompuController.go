@@ -82,10 +82,10 @@ func BajaDesktop(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	//crea item y array de items
 	var Desktop modelos.Desktop
-	//des serializa el json a una estructura de Laptop
+	//des serializa el json a una estructura de Desktop
 	json.NewDecoder(r.Body).Decode(&Desktop)
 	fmt.Println(Desktop)
-	resp:=bd.BajaDesktop(Desktop)
+	resp := bd.BajaDesktop(Desktop)
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }
@@ -96,7 +96,18 @@ func BajaLaptop(w http.ResponseWriter, r *http.Request) {
 	//des serializa el json a una estructura de Laptop
 	json.NewDecoder(r.Body).Decode(&Laptop)
 	fmt.Println(Laptop)
-	resp:=bd.BajaLaptop(Laptop)
+	resp := bd.BajaLaptop(Laptop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
+func BajaMonitor(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Monitor modelos.Monitor
+	//des serializa el json a una estructura de Monitor
+	json.NewDecoder(r.Body).Decode(&Monitor)
+	fmt.Println(Monitor)
+	resp := bd.BajaMonitor(Monitor)
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }
@@ -104,10 +115,10 @@ func ActualizaDesktop(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	//crea item y array de items
 	var Desktop modelos.Desktop
-	//des serializa el json a una estructura de Laptop
+	//des serializa el json a una estructura de Desktop
 	json.NewDecoder(r.Body).Decode(&Desktop)
 	fmt.Println(Desktop)
-	resp:=bd.ActualizaDesktop(Desktop)
+	resp := bd.ActualizaDesktop(Desktop)
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }
@@ -118,7 +129,18 @@ func ActualizaLaptop(w http.ResponseWriter, r *http.Request) {
 	//des serializa el json a una estructura de Laptop
 	json.NewDecoder(r.Body).Decode(&Laptop)
 	fmt.Println(Laptop)
-	resp:=bd.ActualizaLaptop(Laptop)
+	resp := bd.ActualizaLaptop(Laptop)
+	w.WriteHeader(resp.CodigoRespHTTP)
+	json.NewEncoder(w).Encode(resp.Response)
+}
+func ActualizaMonitor(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var Monitor modelos.Monitor
+	//des serializa el json a una estructura de Monitor
+	json.NewDecoder(r.Body).Decode(&Monitor)
+	fmt.Println(Monitor)
+	resp := bd.ActualizaMonitor(Monitor)
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }

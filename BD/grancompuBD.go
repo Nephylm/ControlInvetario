@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	CodigoProducto 	  string
 	Final             string
 	Ram               string
 	Fecha             string
@@ -42,6 +43,8 @@ var (
 	Fuente            string
 	Comentarios       string
 	FechaVent         []uint8
+	SerieDoc  		  string
+	DocVent			  string
 )
 
 func Guardar(inventario []grancompu.Item) string {
@@ -146,6 +149,7 @@ func Laptops(item grancompu.Item) {
 	Laptop.OC, _ = strconv.Atoi(item.Producto["oc"])
 	Laptop.Suc = item.Producto["suc"]
 	Laptop.Familia = item.Producto["familia"]
+	Laptop.CodigoProducto = item.Producto["codigo producto"]
 	Laptop.Marca = item.Producto["marca"]
 	Laptop.Modelo = item.Producto["modelo"]
 	Laptop.Procesador = item.Producto["procesad"]
@@ -185,6 +189,7 @@ func Desktop(item grancompu.Item) {
 	Escritorio.OC, _ = strconv.Atoi(item.Producto["oc"])
 	Escritorio.Suc = item.Producto["suc"]
 	Escritorio.Familia = item.Producto["familia"]
+	Escritorio.CodigoProducto=item.Producto["codigo producto"]
 	Escritorio.Serie = item.Producto["serie"]
 	Escritorio.SerieOriginal = item.Producto["serie original"]
 	Escritorio.Marca = item.Producto["marca"]
@@ -205,13 +210,13 @@ func Desktop(item grancompu.Item) {
 	} else {
 		Final = "SerieOriginal=? OR Serie=?);"
 	}
-	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
+	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE " + Final)
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE " + Final)
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(Escritorio.Fecha, Escritorio.OC, Escritorio.Suc, Escritorio.Familia, Escritorio.Serie, Escritorio.SerieOriginal, Escritorio.Marca,
+	a, err := stmt.Exec(Escritorio.Fecha, Escritorio.OC, Escritorio.Suc, Escritorio.Familia, Escritorio.CodigoProducto, Escritorio.Serie, Escritorio.SerieOriginal, Escritorio.Marca,
 		Escritorio.Modelo, Escritorio.Procesador, Escritorio.Generacion, Escritorio.MemGB, Escritorio.Velocidad, Escritorio.HddGB, Escritorio.HddSerie,
 		Escritorio.UnidadOpt, Escritorio.FuenteSerie, Escritorio.Formato, Escritorio.Licencia, Escritorio.Comentarios,
 		Escritorio.SerieOriginal, Escritorio.Serie)
@@ -311,7 +316,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 
 //Recupera las laptops activas de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
-	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
 		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
@@ -321,6 +326,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&OC,
 			&Suc,
 			&Familia,
+			&CodigoProducto,
 			&Marca,
 			&Modelo,
 			&Procesador,
@@ -343,6 +349,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			OC:            OC,
 			Suc:           Suc,
 			Familia:       Familia,
+			CodigoProducto: CodigoProducto,
 			Marca:         Marca,
 			Modelo:        Modelo,
 			Procesador:    Procesador,
@@ -366,8 +373,8 @@ func GetLaptop() (Data []modelos.Laptop) {
 
 //Recupera las laptops inactivas de la base de datos
 func GetLaptopInactiva() (Data []modelos.Laptop) {
-	PQuery := "SELECT IdLaptop,Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo, FechaVent FROM Laptop WHERE Activo=0;"
+	PQuery := "SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo, FechaVent, SerieDoc, DocVent FROM Laptop WHERE Activo=0;"
 	listado, _ := db.Query(PQuery)
 	revisarError(err)
 	for listado.Next() {
@@ -377,6 +384,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			&OC,
 			&Suc,
 			&Familia,
+			CodigoProducto,
 			&Marca,
 			&Modelo,
 			&Procesador,
@@ -392,6 +400,9 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			&Eliminador,
 			&Activo,
 			&FechaVent,
+			&SerieDoc,
+			&DocVent,
+
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Laptop{
@@ -400,6 +411,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			OC:            OC,
 			Suc:           Suc,
 			Familia:       Familia,
+			CodigoProducto: CodigoProducto,
 			Marca:         Marca,
 			Modelo:        Modelo,
 			Procesador:    Procesador,
@@ -415,6 +427,8 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			Eliminador:    Eliminador,
 			Activo:        Activo,
 			FechaVent:     string(FechaVent),
+			SerieDoc: SerieDoc,
+			DocVent: DocVent,
 		})
 	}
 	return
@@ -422,7 +436,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 
 //Recupera las computadoras de escritorio activas de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
+	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios,Activo FROM Desktop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
@@ -432,6 +446,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			&OC,
 			&Suc,
 			&Familia,
+			&CodigoProducto,
 			&SerieDesktop,
 			&SerieOriginal,
 			&Marca,
@@ -456,6 +471,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 			OC:            OC,
 			Suc:           Suc,
 			Familia:       Familia,
+			CodigoProducto: CodigoProducto,
 			Serie:         SerieDesktop,
 			SerieOriginal: SerieOriginal,
 			Marca:         Marca,
@@ -480,7 +496,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 
 // Recupera las computadoras de escritorio inactivos de la base de datos
 func GetDesktopInactivo() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
+	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios, Activo, FechaVent FROM Desktop WHERE Activo=0;")
 	revisarError(err)
 	for listado.Next() {
@@ -490,6 +506,7 @@ func GetDesktopInactivo() (Data []modelos.Desktop) {
 			&OC,
 			&Suc,
 			&Familia,
+			&CodigoProducto,
 			&SerieDesktop,
 			&SerieOriginal,
 			&Marca,
@@ -507,6 +524,8 @@ func GetDesktopInactivo() (Data []modelos.Desktop) {
 			&Comentarios,
 			&Activo,
 			&FechaVent,
+			&SerieDoc,
+			&DocVent,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Desktop{
@@ -515,6 +534,7 @@ func GetDesktopInactivo() (Data []modelos.Desktop) {
 			OC:            OC,
 			Suc:           Suc,
 			Familia:       Familia,
+			CodigoProducto: CodigoProducto,
 			Serie:         SerieDesktop,
 			SerieOriginal: SerieOriginal,
 			Marca:         Marca,
@@ -532,6 +552,8 @@ func GetDesktopInactivo() (Data []modelos.Desktop) {
 			Comentarios:   Comentarios,
 			Activo:        Activo,
 			FechaVent:     string(FechaVent),
+			SerieDoc: SerieDoc,
+			DocVent: DocVent,
 		})
 	}
 	return
@@ -647,12 +669,12 @@ func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 
 func ActualizaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Laptop SET Fecha=?, OC=?, SUC=?, Familia=?, Marca=?, Modelo=?, Procesador=?, Generacion=?,Velocidad=?, " +
+	stmt, es := db.Prepare("UPDATE Laptop SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Marca=?, Modelo=?, Procesador=?, Generacion=?,Velocidad=?, " +
 		"Mem_GB=?,SerieBateria=? , HDD=?, HddSerie=?, SerieOriginal=?, Pulgadas=?, Camara=?, Eliminador=? WHERE IdLaptop=?;")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
+	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia,Laptop.CodigoProducto, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
 		Laptop.Velocidad, Laptop.MemGB, Laptop.SerieBateria, Laptop.HddGB, Laptop.HddSerie, Laptop.SerieOriginal,
 		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.IdProducto)
 	revisarError(err)
@@ -670,12 +692,12 @@ func ActualizaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 }
 func ActualizaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Desktop SET Fecha=?, OC=?, SUC=?, Familia=?, Serie=?, SerieOriginal=?, Marca=?, Modelo=?, Procesador=?," +
+	stmt, es := db.Prepare("UPDATE Desktop SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?, Modelo=?, Procesador=?," +
 		"Generacion=?, Mem_GB=?,Velocidad=?, HDD=?, HddSerie=?, UnidadOp=?, Fuente=?, Formato=?, Licencia=?, Comentarios=? WHERE IdDesktop=?;")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(Desktop.Fecha, Desktop.OC, Desktop.Suc, Desktop.Familia, Desktop.Serie, Desktop.SerieOriginal, Desktop.Marca,
+	a, err := stmt.Exec(Desktop.Fecha, Desktop.OC, Desktop.Suc, Desktop.Familia,Desktop.CodigoProducto, Desktop.Serie, Desktop.SerieOriginal, Desktop.Marca,
 		Desktop.Modelo, Desktop.Procesador, Desktop.Generacion, Desktop.MemGB, Desktop.Velocidad, Desktop.HddGB, Desktop.HddSerie,
 		Desktop.UnidadOpt, Desktop.FuenteSerie, Desktop.Formato, Desktop.Licencia, Desktop.Comentarios, Desktop.IdProducto)
 	revisarError(err)

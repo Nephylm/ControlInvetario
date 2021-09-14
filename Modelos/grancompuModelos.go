@@ -6,6 +6,7 @@ type Laptop struct {
 	Fecha      string `json:"fecha"`
 	OC         int    `json:"oc"`
 	Suc        string `json:"sucursal"`
+	CodigoProducto string `json:"codigoProducto"`
 	Familia    string `json:"familia"`
 	Marca      string `json:"marca"`
 	Modelo     string `json:"modelo"`
@@ -24,6 +25,8 @@ type Laptop struct {
 	//Comentarios   string `json:"comentarios"`
 	Activo    int    `json:"activo"`
 	FechaVent string `json:"fechaVent"`
+	SerieDoc string `json:"serieDoc"`
+	DocVent string `json:"doc_vent"`
 }
 
 //Estructura de Desktop
@@ -33,6 +36,7 @@ type Desktop struct {
 	OC            int    `json:"oc"`
 	Suc           string `json:"sucursal"`
 	Familia       string `json:"familia"`
+	CodigoProducto string `json:"codigoProducto"`
 	Serie         string `json:"serie"`
 	SerieOriginal string `json:"serieOriginal"`
 	Marca         string `json:"marca"`
@@ -51,6 +55,8 @@ type Desktop struct {
 	Comentarios string `json:"comentarios"`
 	Activo      int    `json:"activo"`
 	FechaVent   string `json:"fechaVent"`
+	SerieDoc string `json:"serieDoc"`
+	DocVent string `json:"doc_vent"`
 	//Provedor string `json:"provedor"`
 }
 

@@ -4,10 +4,11 @@ import (
 	bd "ControlInvetario/BD"
 	grancompuC "ControlInvetario/Controladores"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 //La función main es la primera función en ser ejecutada
@@ -53,13 +54,13 @@ func api() {
 	gorillaRoute.HandleFunc("/GetAllinOne", grancompuC.ObteneAllione).Methods("GET")
 	gorillaRoute.HandleFunc("/GetLaptops", grancompuC.ObteneLaptops).Methods("GET")
 
-
 	gorillaRoute.HandleFunc("/BajaLaptop", grancompuC.BajaLaptop).Methods("POST")
 	gorillaRoute.HandleFunc("/BajaDesktop", grancompuC.BajaDesktop).Methods("POST")
+	gorillaRoute.HandleFunc("/BajaMonitor", grancompuC.BajaMonitor).Methods("POST")
 
 	gorillaRoute.HandleFunc("/ActualizaLaptop", grancompuC.ActualizaLaptop).Methods("POST")
 	gorillaRoute.HandleFunc("/ActualizaDesktop", grancompuC.ActualizaDesktop).Methods("POST")
-
+	gorillaRoute.HandleFunc("/ActualizaMonitor", grancompuC.ActualizaMonitor).Methods("POST")
 
 	//INVENTARIO CHOCOLATES
 	//Aztualiza datos faltantes de insumo
@@ -74,7 +75,6 @@ func api() {
 	gorillaRoute.HandleFunc("/ObtenerProductoOrden", grancompuC.ObtenerProductoOrden).Methods("GET")
 	//gorillaRoute.HandleFunc("/AgregarDetalles", grancompuC.GuarProductoOrden).Methods("POST")
 
-
 	//UTILIDADES
 	//copia registro de productos de matrices a BD
 	gorillaRoute.HandleFunc("/RegistrarIdProductos", grancompuC.CargaIdProdutos).Methods("GET")
@@ -82,8 +82,6 @@ func api() {
 	gorillaRoute.HandleFunc("/ObtenerIdProductos", grancompuC.ObtenerIdProductos).Methods("GET")
 	//copia registro de Insumos de matrices a BD
 	gorillaRoute.HandleFunc("/RegistrarInsumos", grancompuC.CargaDInsumos).Methods("GET")
-
-
 
 	//ruta pra probar metodos
 	gorillaRoute.HandleFunc("/Pruebas", grancompuC.Pruebas).Methods("GET")

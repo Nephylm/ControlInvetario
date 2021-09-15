@@ -43,29 +43,30 @@ var (
 	Fuente            string
 	Comentarios       string
 	FechaVent         []uint8
-	SerieDoc  		  string
-	DocVent			  string
+	Forma             string
+	Base              string
+	Monitorescol      string
+	HDMI              string
+	Tamaño            string
+	SerieDoc          string
+	DocVent           string
+
 )
 
 func Guardar(inventario []grancompu.Item) string {
 	for _, item := range inventario {
 		switch grancompu.Minusculas(item.Producto["familia"]) {
 		case "desktop":
+			fmt.Println("Desktop")
 			Desktop(item)
 		case "laptop":
 			fmt.Println("laptop")
 			Laptops(item)
+		case "monitor":
+			fmt.Println("Monitor")
+			Monitores(item)
 		default:
-			switch item.Producto["clase"] {
-			case "monitor":
-				Monitores(item)
-			case "allinone":
-				AllinOne(item)
-			case "disco duro":
 
-			default:
-				return "error"
-			}
 		}
 
 	}
@@ -75,22 +76,36 @@ func Guardar(inventario []grancompu.Item) string {
 //almacena los monitores en la BD
 func Monitores(item grancompu.Item) {
 	var monitor modelos.Monitor
-	monitor.Clase = item.Producto["clase"]
-	monitor.Modelo = item.Producto["modelo"]
-	monitor.Marca = item.Producto["marca"]
-	monitor.Pulgadas = item.Producto["pulgadas"]
-	monitor.SerieDistribuidor = item.Producto["serie distribuidor"]
+	monitor.Fecha = item.Producto["fecha"]
+	monitor.OC, _ = strconv.Atoi(item.Producto["oc"])
+	monitor.Suc = item.Producto["suc"]
+	monitor.CodigoProducto = item.Producto["codigo producto"]
+	monitor.Familia = item.Producto["familia"]
+	monitor.Serie = item.Producto["serie"]
 	monitor.SerieOriginal = item.Producto["serie original"]
+	monitor.Marca = item.Producto["marca"]
+	monitor.Modelo = item.Producto["modelo"]
+	monitor.Forma = item.Producto["forma"]
 	monitor.Tipo = item.Producto["tipo"]
-	monitor.Salida = item.Producto["salidas"]
-	stmt, es := db.Prepare("INSERT INTO Monitores (Clase,Modelo,Marca,Pulgadas, SerieDistri, SerieOriginal, Tipo, Salidas)" +
-		" SELECT ?, ?, ?, ?, ?,?,?,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE SerieOriginal=?);")
+	monitor.Salidas = item.Producto["salidas"]
+	monitor.HDMI = item.Producto["hdmi"]
+	monitor.Clase = item.Producto["clase"]
+	monitor.Tamaño = item.Producto["tamaño"]
+	monitor.Base = item.Producto["base"]
+	if monitor.Serie == "" || monitor.Serie == "ok" {
+		Final = "SerieOriginal=? AND Serie=?);"
+	} else {
+		Final = "SerieOriginal=? OR Serie=?);"
+	}
+	stmt, es := db.Prepare("INSERT INTO Monitores (Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma, " +
+		" Base, Tipo, Salidas, HDMI, Clase, Tamaño) " +
+		" SELECT ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE " + Final)
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(monitor.Clase, monitor.Modelo, monitor.Marca, monitor.Pulgadas,
-		monitor.SerieDistribuidor, monitor.SerieOriginal, monitor.Tipo, monitor.Salida, monitor.SerieOriginal)
-
+	a, err := stmt.Exec(monitor.Fecha, monitor.OC, monitor.Suc, monitor.Familia, monitor.CodigoProducto, monitor.Serie, monitor.SerieOriginal,
+		monitor.Marca, monitor.Modelo, monitor.Forma, monitor.Base, monitor.Tipo, monitor.Salidas, monitor.HDMI,
+		monitor.Clase, monitor.Tamaño, monitor.SerieOriginal, monitor.Serie)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -231,29 +246,102 @@ func Desktop(item grancompu.Item) {
 
 //Recupera los monitores de la base de datos
 func GetMonitores() (Data []modelos.Monitor) {
-	listado, _ := db.Query("SELECT Clase,Marca,Modelo,Pulgadas, Tipo, SerieOriginal,SerieDistri, Salidas FROM Monitores;")
+	listado, _ := db.Query("SELECT IdMonitores, Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma," +
+		" Base, Tipo, Salidas, HDMI, Clase, Tamaño FROM Monitores WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
-			&Clase,
+			&IdProducto,
+			&Fecha,
+			&OC,
+			&Suc,
+			&Familia,
+			&CodigoProducto,
+			&SerieDesktop,
+			&SerieOriginal,
 			&Marca,
 			&Modelo,
-			&Pulgadas,
+			&Forma,
+			&Base,
 			&Tipo,
-			&SerieOriginal,
-			&SerieDistribuidor,
 			&Salida,
+			&HDMI,
+			&Clase,
+			&Tamaño,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Monitor{
-			Clase:             Clase,
-			Marca:             Marca,
-			Modelo:            Modelo,
-			Pulgadas:          Pulgadas,
-			Tipo:              Tipo,
-			SerieOriginal:     SerieOriginal,
-			SerieDistribuidor: SerieDistribuidor,
-			Salida:            Salida,
+			IdProducto: IdProducto,
+			Fecha:          Fecha,
+			OC:             OC,
+			Suc:            Suc,
+			Familia:        Familia,
+			CodigoProducto: CodigoProducto,
+			Serie:          SerieDesktop,
+			SerieOriginal:  SerieOriginal,
+			Marca:          Marca,
+			Modelo:         Modelo,
+			Forma:          Forma,
+			Base:           Base,
+			Tipo:           Tipo,
+			Salidas:        Salida,
+			HDMI:           HDMI,
+			Clase:          Clase,
+			Tamaño:         Tamaño,
+		})
+	}
+	Data = append(Data, GetMonitoresInactivo()...)
+	return
+}
+func GetMonitoresInactivo() (Data []modelos.Monitor) {
+	listado, _ := db.Query("SELECT IdMonitores, Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma," +
+		" Base, Tipo, Salidas, HDMI, Clase, Tamaño, FechaVent, SerieDoc, DocVent  FROM Monitores WHERE Activo=0;")
+	revisarError(err)
+	for listado.Next() {
+		err = listado.Scan(
+			&IdProducto,
+			&Fecha,
+			&OC,
+			&Suc,
+			&Familia,
+			&CodigoProducto,
+			&SerieDesktop,
+			&SerieOriginal,
+			&Marca,
+			&Modelo,
+			&Forma,
+			&Base,
+			&Tipo,
+			&Salida,
+			&HDMI,
+			&Clase,
+			&Tamaño,
+			&FechaVent,
+			&SerieDoc,
+			&DocVent,
+		)
+		revisarError(err)
+		Data = append(Data, modelos.Monitor{
+			IdProducto: IdProducto,
+			Fecha:          Fecha,
+			OC:             OC,
+			Suc:            Suc,
+			Familia:        Familia,
+			CodigoProducto: CodigoProducto,
+			Serie:          SerieDesktop,
+			SerieOriginal:  SerieOriginal,
+			Marca:          Marca,
+			Modelo:         Modelo,
+			Forma:          Forma,
+			Base:           Base,
+			Tipo:           Tipo,
+			Salidas:        Salida,
+			HDMI:           HDMI,
+			Clase:          Clase,
+			Tamaño:         Tamaño,
+			FechaVent:      string(FechaVent),
+			SerieDoc:       SerieDoc,
+			DocVent:        DocVent,
 		})
 	}
 	return
@@ -316,7 +404,7 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 
 //Recupera las laptops activas de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
-	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
 		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop WHERE Activo=1;")
 	revisarError(err)
 	for listado.Next() {
@@ -666,6 +754,26 @@ func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 	}
 	return
 }
+func BajaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Monitores SET Activo=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE IdMonitores=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Monitor.SerieDoc, Monitor.DocVent, Monitor.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Baja exitosa"
+		fmt.Println("Baja exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al dar de baja"
+		fmt.Println("Error al dar de baja")
+	}
+	return
+}
 
 func ActualizaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 
@@ -700,6 +808,29 @@ func ActualizaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) 
 	a, err := stmt.Exec(Desktop.Fecha, Desktop.OC, Desktop.Suc, Desktop.Familia,Desktop.CodigoProducto, Desktop.Serie, Desktop.SerieOriginal, Desktop.Marca,
 		Desktop.Modelo, Desktop.Procesador, Desktop.Generacion, Desktop.MemGB, Desktop.Velocidad, Desktop.HddGB, Desktop.HddSerie,
 		Desktop.UnidadOpt, Desktop.FuenteSerie, Desktop.Formato, Desktop.Licencia, Desktop.Comentarios, Desktop.IdProducto)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		resp.CodigoRespHTTP = 200
+		resp.Response = "Actualizacion exitosa"
+		fmt.Println("Actualizacion exitosa")
+	} else {
+		resp.CodigoRespHTTP = 400
+		resp.Response = "Error al Actualizar"
+		fmt.Println("Error al Actualizar")
+	}
+	return
+}
+func ActualizaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
+
+	stmt, es := db.Prepare("UPDATE Monitores SET Fecha=?, OC=?, Suc=?, Familia=?, CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?," +
+		" Modelo=?, Forma=?,Base=?, Tipo=?, Salidas=?, HDMI=?, Clase=?, Tamaño=? WHERE IdMonitores=?;")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Monitor.Fecha, Monitor.OC, Monitor.Suc, Monitor.Familia, Monitor.CodigoProducto, Monitor.Serie, Monitor.SerieOriginal,
+		Monitor.Marca, Monitor.Modelo, Monitor.Forma, Monitor.Base, Monitor.Tipo, Monitor.Salidas, Monitor.HDMI,
+		Monitor.Clase, Monitor.Tamaño, Monitor.IdProducto)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {

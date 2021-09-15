@@ -56,21 +56,33 @@ type Desktop struct {
 	Activo      int    `json:"activo"`
 	FechaVent   string `json:"fechaVent"`
 	SerieDoc string `json:"serieDoc"`
-	DocVent string `json:"doc_vent"`
+	DocVent string `json:"docVent"`
 	//Provedor string `json:"provedor"`
 }
 
 //Estructura de Monitor
 type Monitor struct {
-	IdProducto        int    `json:"idMonitor"`
-	Clase             string `json:"class"`
-	Marca             string `json:"marca"`
-	Modelo            string `json:"modelo"`
-	Pulgadas          string `json:"pulgadas"`
-	Tipo              string `json:"tipo"`
-	SerieOriginal     string `json:"serieOriginal"`
-	SerieDistribuidor string `json:"serieDistribuidor"`
-	Salida            string `json:"salida"`
+	IdProducto     int    `json:"idMonitores"`
+	Fecha          string `json:"fecha"`
+	OC             int    `json:"oc"`
+	Suc            string `json:"sucursal"`
+	Familia        string `json:"familia"`
+	CodigoProducto string `json:"codigoProducto"`
+	Serie          string `json:"serie"`
+	SerieOriginal  string `json:"serieOriginal"`
+	Marca          string `json:"marca"`
+	Modelo         string `json:"modelo"`
+	Forma          string `json:"forma"`
+	Base           string `json:"base"`
+	Tipo           string `json:"tipo"`
+	Salidas        string `json:"salidas"`
+	HDMI           string `json:"HDMI"`
+	Clase          string `json:"clase"`
+	Tamaño         string `json:"Tamaño"`
+	Activo         int    `json:"activo"`
+	FechaVent      string `json:"fechaVent"`
+	SerieDoc       string `json:"serieDoc"`
+	DocVent        string `json:"DocVent"`
 }
 
 //Estructura de AllInOne

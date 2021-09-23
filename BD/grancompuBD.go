@@ -65,6 +65,9 @@ func Guardar(inventario []grancompu.Item) string {
 		case "monitor":
 			fmt.Println("Monitor")
 			Monitores(item)
+		case "monitors":
+			fmt.Println("Monitor")
+			Monitores(item)
 		default:
 
 		}
@@ -81,7 +84,9 @@ func Monitores(item grancompu.Item) {
 	monitor.Suc = item.Producto["suc"]
 	monitor.CodigoProducto = item.Producto["codigo producto"]
 	monitor.Familia = item.Producto["familia"]
-	monitor.Serie = item.Producto["serie"]
+	if item.Producto["serie"]==""{
+		monitor.Serie =""
+	}
 	monitor.SerieOriginal = item.Producto["serie original"]
 	monitor.Marca = item.Producto["marca"]
 	monitor.Modelo = item.Producto["modelo"]
@@ -92,20 +97,15 @@ func Monitores(item grancompu.Item) {
 	monitor.Clase = item.Producto["clase"]
 	monitor.Tamaño = item.Producto["tamaño"]
 	monitor.Base = item.Producto["base"]
-	if monitor.Serie == "" || monitor.Serie == "ok" {
-		Final = "SerieOriginal=? AND Serie=?);"
-	} else {
-		Final = "SerieOriginal=? OR Serie=?);"
-	}
 	stmt, es := db.Prepare("INSERT INTO Monitores (Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma, " +
 		" Base, Tipo, Salidas, HDMI, Clase, Tamaño) " +
-		" SELECT ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE " + Final)
+		" SELECT ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE SerieOriginal=?);")
 	if es != nil {
 		panic(es.Error())
 	}
 	a, err := stmt.Exec(monitor.Fecha, monitor.OC, monitor.Suc, monitor.Familia, monitor.CodigoProducto, monitor.Serie, monitor.SerieOriginal,
 		monitor.Marca, monitor.Modelo, monitor.Forma, monitor.Base, monitor.Tipo, monitor.Salidas, monitor.HDMI,
-		monitor.Clase, monitor.Tamaño, monitor.SerieOriginal, monitor.Serie)
+		monitor.Clase, monitor.Tamaño, monitor.SerieOriginal)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -717,6 +717,7 @@ func GetItem(elme grancompu.Elemento) (Data grancompu.Elemento) {
 
 func BajaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 	stmt, es := db.Prepare("UPDATE Laptop SET Activo=0, FechaVent=CURDATE() WHERE IdLaptop=?;")
+	//stmt, es := db.Prepare("UPDATE Laptop SET Activo=0, FechaVent=CURDATE() WHERE CodigoProducto= AND SerieOriginal=?;")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -737,6 +738,7 @@ func BajaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 
 	stmt, es := db.Prepare("UPDATE Desktop SET Activo=0, FechaVent=CURDATE() WHERE IdDesktop=?;")
+	//stmt, es := db.Prepare("UPDATE Desktop SET Activo=0, FechaVent=CURDATE() WHERE CodigoProducto=? AND Serie=?;")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -757,6 +759,7 @@ func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 func BajaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
 
 	stmt, es := db.Prepare("UPDATE Monitores SET Activo=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE IdMonitores=?;")
+	//stmt, es := db.Prepare("UPDATE Monitores SET Activo=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE CodigoProdcuto=? Serie=?;")
 	if es != nil {
 		panic(es.Error())
 	}

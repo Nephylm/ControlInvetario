@@ -472,7 +472,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			&OC,
 			&Suc,
 			&Familia,
-			CodigoProducto,
+			&CodigoProducto,
 			&Marca,
 			&Modelo,
 			&Procesador,
@@ -585,7 +585,7 @@ func GetDesktop() (Data []modelos.Desktop) {
 // Recupera las computadoras de escritorio inactivos de la base de datos
 func GetDesktopInactivo() (Data []modelos.Desktop) {
 	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios, Activo, FechaVent FROM Desktop WHERE Activo=0;")
+		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios, Activo, FechaVent, SerieDoc, DocVent FROM Desktop WHERE Activo=0;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(

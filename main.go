@@ -51,7 +51,6 @@ func api() {
 	//Rutas de consulta de contenido de la BD.
 	gorillaRoute.HandleFunc("/GetMonitores", grancompuC.ObteneMonitores).Methods("GET")
 	gorillaRoute.HandleFunc("/GetDesktops", grancompuC.ObteneDesktops).Methods("GET")
-	gorillaRoute.HandleFunc("/GetAllinOne", grancompuC.ObteneAllione).Methods("GET")
 	gorillaRoute.HandleFunc("/GetLaptops", grancompuC.ObteneLaptops).Methods("GET")
 
 	gorillaRoute.HandleFunc("/BajaLaptop", grancompuC.BajaLaptop).Methods("POST")

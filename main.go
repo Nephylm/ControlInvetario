@@ -46,12 +46,16 @@ func api() {
 	//INVENTARIO COMPUSI - GRANCOMPU
 	gorillaRoute.HandleFunc("/lista", grancompuC.GetListaExel).Methods("GET")
 	//Recibe los erchivos de exel y almacena el contenido en la BD
+															gorillaRoute.HandleFunc("/ListaCompra", grancompuC.ObteneInventario).Methods("GET")
+	gorillaRoute.HandleFunc("/Compra", grancompuC.Compra).Methods("POST")
 	gorillaRoute.HandleFunc("/Guardar", grancompuC.Guardar).Methods("POST")
 	gorillaRoute.HandleFunc("/GuardarUno", grancompuC.GuardarUno).Methods("POST")
 	//Rutas de consulta de contenido de la BD.
 	gorillaRoute.HandleFunc("/GetMonitores", grancompuC.ObteneMonitores).Methods("GET")
 	gorillaRoute.HandleFunc("/GetDesktops", grancompuC.ObteneDesktops).Methods("GET")
 	gorillaRoute.HandleFunc("/GetLaptops", grancompuC.ObteneLaptops).Methods("GET")
+	gorillaRoute.HandleFunc("/ImpLaptops", grancompuC.ImpLaptops).Methods("GET")
+
 
 	gorillaRoute.HandleFunc("/BajaLaptop", grancompuC.BajaLaptop).Methods("POST")
 	gorillaRoute.HandleFunc("/BajaDesktop", grancompuC.BajaDesktop).Methods("POST")

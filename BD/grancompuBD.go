@@ -97,65 +97,35 @@ func Monitores(item grancompu.Item) {
 	monitor.Clase = item.Producto["clase"]
 	monitor.Tamaño = item.Producto["tamaño"]
 	monitor.Base = item.Producto["base"]
-	stmt, es := db.Prepare("INSERT INTO Monitores (Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma, " +
-		" Base, Tipo, Salidas, HDMI, Clase, Tamaño) " +
-		" SELECT ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? WHERE NOT EXISTS (SELECT *FROM Monitores WHERE SerieOriginal=?);")
+	stmt, es := db.Prepare("INSERT INTO Registro (Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma, " +
+		" Base, TipoPantalla, Salidas, HDMI, Clase, Tamaño) " +
+		" SELECT ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? WHERE NOT EXISTS (SELECT *FROM Registro WHERE SerieOriginal=? AND Familia=?);")
 	if es != nil {
 		panic(es.Error())
 	}
 	a, err := stmt.Exec(monitor.Fecha, monitor.OC, monitor.Suc, monitor.Familia, monitor.CodigoProducto, monitor.Serie, monitor.SerieOriginal,
 		monitor.Marca, monitor.Modelo, monitor.Forma, monitor.Base, monitor.Tipo, monitor.Salidas, monitor.HDMI,
-		monitor.Clase, monitor.Tamaño, monitor.SerieOriginal)
+		monitor.Clase, monitor.Tamaño, monitor.SerieOriginal,monitor.Familia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
-		fmt.Println("Guardado exitoso")
+		stmt, er:=db.Prepare("INSERT INTO Inventario (IdRegistro) SELECT (SELECT IdRegistro FROM Registro WHERE SerieOriginal=? AND Familia=?);")
+		if er != nil {
+			panic(es.Error())
+		}
+		a,err=stmt.Exec(monitor.SerieOriginal,monitor.Familia)
+		revisarError(err)
+		affected, _ = a.RowsAffected()
+		if affected > 0 {
+			fmt.Println("Guardado exitoso")
+		}else {
+			fmt.Println("Error al registra tabla Inventario")
+		}
 	} else {
 		fmt.Println("producto ya registrado")
 	}
 }
 
-//almacena las computadoras All in One en la BD
-func AllinOne(item grancompu.Item) {
-	var AllOne modelos.AllInOne
-	AllOne.Fecha = item.Producto["fecha"]
-	AllOne.OC, _ = strconv.Atoi(item.Producto["oc"])
-	AllOne.SUC = item.Producto["suc"]
-	AllOne.Familia = item.Producto["familia"]
-	AllOne.Serie, _ = strconv.Atoi(item.Producto["serie"])
-	AllOne.SerieOriginal = item.Producto["serie original"]
-	AllOne.Marca = item.Producto["marca"]
-	AllOne.Modelo = item.Producto["modelo"]
-	AllOne.Procesador = item.Producto["procesador"]
-	AllOne.Gen, _ = strconv.Atoi(item.Producto["gen"])
-	AllOne.Mem_GB, _ = item.Producto["mem/gb"]
-	AllOne.Velocidad = item.Producto["vel /ghz"]
-	AllOne.HDD = item.Producto["hdd/gb"]
-	AllOne.HddSerie = item.Producto["hdd serie"]
-	AllOne.UnidadOp = item.Producto["unidad optica"]
-	AllOne.Fuente = item.Producto["fuente serie"]
-	AllOne.Formato = item.Producto["formato"]
-	AllOne.Pulgadas = item.Producto["pulgadas"]
-	AllOne.Licencia = item.Producto["licencia"]
-	AllOne.Comentarios = item.Producto["comentarios"]
-	stmt, es := db.Prepare("INSERT INTO AllinOne (Fecha, OC, SUC, Familia, Serie, SerieOriginal, Marca, Modelo, Procesador, Gen, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Pulgadas, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM AllinOne WHERE SerieOriginal=? OR Serie=?);")
-	if es != nil {
-		panic(es.Error())
-	}
-	a, err := stmt.Exec(AllOne.Fecha, AllOne.OC, AllOne.SUC, AllOne.Familia, AllOne.Serie, AllOne.SerieOriginal, AllOne.Marca,
-		AllOne.Modelo, AllOne.Procesador, AllOne.Gen, AllOne.Mem_GB, AllOne.Velocidad, AllOne.HDD, AllOne.HddSerie,
-		AllOne.UnidadOp, AllOne.Fuente, AllOne.Formato, AllOne.Pulgadas, AllOne.Licencia, AllOne.Comentarios,
-		AllOne.SerieOriginal, AllOne.Serie)
-	revisarError(err)
-	affected, _ := a.RowsAffected()
-	if affected > 0 {
-		fmt.Println("Guardado exitoso")
-	} else {
-		fmt.Println("producto ya registrado")
-	}
-}
 
 //almacena las Laptops All in One en la BD
 func Laptops(item grancompu.Item) {
@@ -170,7 +140,7 @@ func Laptops(item grancompu.Item) {
 	Laptop.Procesador = item.Producto["procesad"]
 	Laptop.Generacion, _ = strconv.Atoi(item.Producto["gen"])
 	Laptop.Velocidad = item.Producto["veloghz"]
-	Laptop.MemGB, _ = strconv.Atoi(item.Producto["memgb"])
+	Laptop.MemGB = item.Producto["memgb"]
 	Laptop.SerieBateria = item.Producto["serie bateria"]
 	Laptop.HddGB = item.Producto["disco"]
 	Laptop.HddSerie = item.Producto["serie disco"]
@@ -179,19 +149,30 @@ func Laptops(item grancompu.Item) {
 	Laptop.Camara = item.Producto["camara"]
 	Laptop.Eliminador = item.Producto["eliminador"]
 	//Laptop.Comentarios=item.Producto["comentarios"]
-	stmt, es := db.Prepare("INSERT INTO Laptop (Fecha, OC, SUC, Familia, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
+	stmt, es := db.Prepare("INSERT INTO Registro (Fecha, OC, SUC, Familia, CodigoProducto, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
 		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Laptop WHERE SerieOriginal=?);")
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? WHERE NOT EXISTS (SELECT *FROM Registro WHERE SerieOriginal=? AND Familia=?);")
 	if es != nil {
 		panic(es.Error())
 	}
-	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
+	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia,Laptop.CodigoProducto, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
 		Laptop.Velocidad, Laptop.MemGB, Laptop.SerieBateria, Laptop.HddGB, Laptop.HddSerie, Laptop.SerieOriginal,
-		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.SerieOriginal)
+		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.SerieOriginal, Familia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
-		fmt.Println("Guardado exitoso")
+		stmt, er:=db.Prepare("INSERT INTO Inventario (IdRegistro) SELECT (SELECT IdRegistro FROM Registro WHERE SerieOriginal=? AND Familia=?);")
+		if er != nil {
+			panic(es.Error())
+		}
+		a,err=stmt.Exec(Laptop.SerieOriginal,Laptop.Familia)
+		revisarError(err)
+		affected, _ = a.RowsAffected()
+		if affected > 0 {
+			fmt.Println("Guardado exitoso")
+		}else {
+			fmt.Println("Error al registra tabla Inventario")
+		}
 	} else {
 		fmt.Println("producto ya registrado")
 	}
@@ -221,24 +202,35 @@ func Desktop(item grancompu.Item) {
 	Escritorio.Licencia = item.Producto["licencia"]
 	Escritorio.Comentarios = item.Producto["comentarios"]
 	if Escritorio.Serie == "" || Escritorio.Serie == "ok" {
-		Final = "SerieOriginal=? AND Serie=?);"
+		Final = "SerieOriginal=? AND Serie=? AND Familia=?);"
 	} else {
-		Final = "SerieOriginal=? OR Serie=?);"
+		Final = "(SerieOriginal=? OR Serie=?)AND Familia=? );"
 	}
-	stmt, es := db.Prepare("INSERT INTO Desktop (Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
+	stmt, es := db.Prepare("INSERT INTO Registro (Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
 		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios)" +
-		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Desktop WHERE " + Final)
+		" SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT *FROM Registro WHERE " + Final)
 	if es != nil {
 		panic(es.Error())
 	}
 	a, err := stmt.Exec(Escritorio.Fecha, Escritorio.OC, Escritorio.Suc, Escritorio.Familia, Escritorio.CodigoProducto, Escritorio.Serie, Escritorio.SerieOriginal, Escritorio.Marca,
 		Escritorio.Modelo, Escritorio.Procesador, Escritorio.Generacion, Escritorio.MemGB, Escritorio.Velocidad, Escritorio.HddGB, Escritorio.HddSerie,
 		Escritorio.UnidadOpt, Escritorio.FuenteSerie, Escritorio.Formato, Escritorio.Licencia, Escritorio.Comentarios,
-		Escritorio.SerieOriginal, Escritorio.Serie)
+		Escritorio.SerieOriginal, Escritorio.Serie,Escritorio.Familia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
+		stmt, er:=db.Prepare("INSERT INTO Inventario (IdRegistro) SELECT (SELECT IdRegistro FROM Registro WHERE SerieOriginal=? AND Familia=?);")
+		if er != nil {
+			panic(es.Error())
+		}
+		a,err=stmt.Exec(Escritorio.SerieOriginal,Escritorio.Familia)
+		revisarError(err)
+		affected, _ = a.RowsAffected()
+		if affected > 0 {
 		fmt.Println("Guardado exitoso")
+		}else {
+			fmt.Println("Error al registra tabla Inventario")
+		}
 	} else {
 		fmt.Println("producto ya registrado")
 	}
@@ -246,8 +238,10 @@ func Desktop(item grancompu.Item) {
 
 //Recupera los monitores de la base de datos
 func GetMonitores() (Data []modelos.Monitor) {
-	listado, _ := db.Query("SELECT IdMonitores, Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma," +
-		" Base, Tipo, Salidas, HDMI, Clase, Tamaño FROM Monitores WHERE Activo=1;")
+	listado, _ := db.Query("SELECT R.IdRegistro, R.Fecha, R.OC, R.Suc, R.Familia, R.CodigoProducto, R.Serie, R.SerieOriginal, R.Marca," +
+		" R.Modelo, R.Forma,R.Base, R.TipoPantalla, R.Salidas, R.HDMI, R.Clase," +
+		" R.Tamaño, I.Estado FROM Registro AS R INNER JOIN Inventario AS I ON R.IdRegistro = I.IdRegistro " +
+		"WHERE I.Estado=1 AND (R.Familia='monitors' OR R.Familia='monitor');")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -268,6 +262,7 @@ func GetMonitores() (Data []modelos.Monitor) {
 			&HDMI,
 			&Clase,
 			&Tamaño,
+			&Activo,
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Monitor{
@@ -288,14 +283,17 @@ func GetMonitores() (Data []modelos.Monitor) {
 			HDMI:           HDMI,
 			Clase:          Clase,
 			Tamaño:         Tamaño,
+			Activo: Activo,
 		})
 	}
 	Data = append(Data, GetMonitoresInactivo()...)
 	return
 }
 func GetMonitoresInactivo() (Data []modelos.Monitor) {
-	listado, _ := db.Query("SELECT IdMonitores, Fecha, OC, Suc, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Forma," +
-		" Base, Tipo, Salidas, HDMI, Clase, Tamaño, FechaVent, SerieDoc, DocVent  FROM Monitores WHERE Activo=0;")
+	listado, _ := db.Query("SELECT R.IdRegistro, R.Fecha, R.OC, R.Suc, R.Familia, R.CodigoProducto, R.Serie, R.SerieOriginal," +
+		" R.Marca, R.Modelo, R.Forma,R.Base, R.TipoPantalla, R.Salidas, R.HDMI, R.Clase, R.Tamaño, I.Estado, I.FechaVent, I.SerieDoc, " +
+		"I.DocVent FROM Registro AS R INNER JOIN Inventario AS I ON R.IdRegistro = I.IdRegistro " +
+		"WHERE I.Estado=0 AND (R.Familia='monitors' OR R.Familia='monitor');")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -316,9 +314,11 @@ func GetMonitoresInactivo() (Data []modelos.Monitor) {
 			&HDMI,
 			&Clase,
 			&Tamaño,
+			&Activo,
 			&FechaVent,
 			&SerieDoc,
 			&DocVent,
+
 		)
 		revisarError(err)
 		Data = append(Data, modelos.Monitor{
@@ -342,6 +342,7 @@ func GetMonitoresInactivo() (Data []modelos.Monitor) {
 			FechaVent:      string(FechaVent),
 			SerieDoc:       SerieDoc,
 			DocVent:        DocVent,
+			Activo: 		Activo,
 		})
 	}
 	return
@@ -404,8 +405,10 @@ func GetAllInOne() (Data []modelos.AllInOne) {
 
 //Recupera las laptops activas de la base de datos
 func GetLaptop() (Data []modelos.Laptop) {
-	listado, _ := db.Query("SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo FROM Laptop WHERE Activo=1;")
+	listado, _ := db.Query("SELECT R.IdRegistro, R.Fecha, R.OC, R.SUC, R.Familia,R.CodigoProducto,R.Marca," +
+		"R.Modelo,R.Procesador,R.Generacion,R.Velocidad,R.Mem_GB,R.SerieBateria , R.HDD, R.HddSerie, R.SerieOriginal," +
+		" R.Pulgadas, R.Camara,R.Eliminador, I.Estado FROM Registro AS R INNER JOIN Inventario AS I ON R.IdRegistro = I.IdRegistro " +
+		"WHERE I.Estado=1 AND R.Familia='laptop';")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -420,7 +423,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			&Procesador,
 			&Generacion,
 			&Velocidad,
-			&MemGBLaptop,
+			&MemGB,
 			&SerieBateria,
 			&HddGB,
 			&HddSerie,
@@ -443,7 +446,7 @@ func GetLaptop() (Data []modelos.Laptop) {
 			Procesador:    Procesador,
 			Generacion:    Generacion,
 			Velocidad:     Velocidad,
-			MemGB:         MemGBLaptop,
+			MemGB:         MemGB,
 			SerieBateria:  SerieBateria,
 			HddGB:         HddGB,
 			HddSerie:      HddSerie,
@@ -461,8 +464,10 @@ func GetLaptop() (Data []modelos.Laptop) {
 
 //Recupera las laptops inactivas de la base de datos
 func GetLaptopInactiva() (Data []modelos.Laptop) {
-	PQuery := "SELECT IdLaptop,Fecha, OC, SUC, Familia,CodigoProducto, Marca, Modelo, Procesador, Generacion,Velocidad, Mem_GB," +
-		"SerieBateria , HDD, HddSerie, SerieOriginal, Pulgadas, Camara, Eliminador, Activo, FechaVent, SerieDoc, DocVent FROM Laptop WHERE Activo=0;"
+	PQuery := "SELECT R.IdRegistro, R.Fecha, R.OC, R.SUC, R.Familia,R.CodigoProducto,R.Marca,R.Modelo,R.Procesador,R.Generacion," +
+		"R.Velocidad,R.Mem_GB,R.SerieBateria , R.HDD, R.HddSerie, R.SerieOriginal, R.Pulgadas, R.Camara,R.Eliminador, I.Estado," +
+		" I.FechaVent, I.SerieDoc, I.DocVent FROM Registro AS R INNER JOIN Inventario AS I ON R.IdRegistro = I.IdRegistro " +
+		"WHERE I.Estado=0 AND R.Familia='laptop';"
 	listado, _ := db.Query(PQuery)
 	revisarError(err)
 	for listado.Next() {
@@ -478,7 +483,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			&Procesador,
 			&Generacion,
 			&Velocidad,
-			&MemGBLaptop,
+			&MemGB,
 			&SerieBateria,
 			&HddGB,
 			&HddSerie,
@@ -505,7 +510,7 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 			Procesador:    Procesador,
 			Generacion:    Generacion,
 			Velocidad:     Velocidad,
-			MemGB:         MemGBLaptop,
+			MemGB:         MemGB,
 			SerieBateria:  SerieBateria,
 			HddGB:         HddGB,
 			HddSerie:      HddSerie,
@@ -524,8 +529,13 @@ func GetLaptopInactiva() (Data []modelos.Laptop) {
 
 //Recupera las computadoras de escritorio activas de la base de datos
 func GetDesktop() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia, CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios,Activo FROM Desktop WHERE Activo=1;")
+	//listado, err := db.Query("SELECT IdRegistro, Fecha, OC, SUC, Familia,CodigoProducto,Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB,"+
+	//	"Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia,Comentarios FROM Registro;")
+	listado, err := db.Query("SELECT r.IdRegistro, r.Fecha, r.OC, r.SUC, r.Familia,r.CodigoProducto, r.Serie, " +
+		"r.SerieOriginal, r.Marca, r.Modelo, r.Procesador, r.Generacion, r.Mem_GB,r.Velocidad, r.HDD, r.HddSerie, r.UnidadOp, " +
+		"r.Fuente, r.Formato, r.Licencia, r.Comentarios," +
+		" i.Estado FROM Registro AS r INNER JOIN Inventario AS i ON r.IdRegistro = i.IdRegistro " +
+		"WHERE Familia='desktop' AND Estado=1;")
 	revisarError(err)
 	for listado.Next() {
 		err = listado.Scan(
@@ -584,9 +594,13 @@ func GetDesktop() (Data []modelos.Desktop) {
 
 // Recupera las computadoras de escritorio inactivos de la base de datos
 func GetDesktopInactivo() (Data []modelos.Desktop) {
-	listado, _ := db.Query("SELECT IdDesktop, Fecha, OC, SUC, Familia,CodigoProducto, Serie, SerieOriginal, Marca, Modelo, Procesador, Generacion, Mem_GB," +
-		" Velocidad, HDD, HddSerie, UnidadOp, Fuente, Formato, Licencia, Comentarios, Activo, FechaVent, SerieDoc, DocVent FROM Desktop WHERE Activo=0;")
+	listado, err := db.Query("SELECT r.IdRegistro, r.Fecha, r.OC, r.SUC, r.Familia,r.CodigoProducto, r.Serie, " +
+		"r.SerieOriginal, r.Marca, r.Modelo, r.Procesador, r.Generacion, r.Mem_GB,r.Velocidad, r.HDD, r.HddSerie, r.UnidadOp, " +
+		"r.Fuente, r.Formato, r.Licencia, r.Comentarios," +
+		" i.Estado,i.FechaVent,i.SerieDoc,i.DocVent FROM Registro AS r INNER JOIN Inventario AS i ON r.IdRegistro = i.IdRegistro " +
+		"WHERE Familia='desktop' AND Estado=0;")
 	revisarError(err)
+
 	for listado.Next() {
 		err = listado.Scan(
 			&IdProducto,
@@ -716,7 +730,7 @@ func GetItem(elme grancompu.Elemento) (Data grancompu.Elemento) {
 }
 
 func BajaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
-	stmt, es := db.Prepare("UPDATE Laptop SET Activo=0, FechaVent=CURDATE() WHERE IdLaptop=?;")
+	stmt, es := db.Prepare("UPDATE Inventario SET Estado=0, FechaVent=CURDATE() WHERE IdRegistro=?;")
 	//stmt, es := db.Prepare("UPDATE Laptop SET Activo=0, FechaVent=CURDATE() WHERE CodigoProducto= AND SerieOriginal=?;")
 	if es != nil {
 		panic(es.Error())
@@ -737,7 +751,7 @@ func BajaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 }
 func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Desktop SET Activo=0, FechaVent=CURDATE() WHERE IdDesktop=?;")
+	stmt, es := db.Prepare("UPDATE Inventario SET Estado=0, FechaVent=CURDATE() WHERE IdRegistro=?;")
 	//stmt, es := db.Prepare("UPDATE Desktop SET Activo=0, FechaVent=CURDATE() WHERE CodigoProducto=? AND Serie=?;")
 	if es != nil {
 		panic(es.Error())
@@ -758,7 +772,7 @@ func BajaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 }
 func BajaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Monitores SET Activo=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE IdMonitores=?;")
+	stmt, es := db.Prepare("UPDATE Inventario SET Estado=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE IdRegistro=? ;")
 	//stmt, es := db.Prepare("UPDATE Monitores SET Activo=0, FechaVent=CURDATE(), SerieDoc=?, DocVent=? WHERE CodigoProdcuto=? Serie=?;")
 	if es != nil {
 		panic(es.Error())
@@ -780,14 +794,14 @@ func BajaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
 
 func ActualizaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Laptop SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Marca=?, Modelo=?, Procesador=?, Generacion=?,Velocidad=?, " +
-		"Mem_GB=?,SerieBateria=? , HDD=?, HddSerie=?, SerieOriginal=?, Pulgadas=?, Camara=?, Eliminador=? WHERE IdLaptop=?;")
+	stmt, es := db.Prepare("UPDATE Registro SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Marca=?, Modelo=?, Procesador=?, Generacion=?,Velocidad=?, " +
+		"Mem_GB=?,SerieBateria=? , HDD=?, HddSerie=?, SerieOriginal=?, Pulgadas=?, Camara=?, Eliminador=? WHERE IdRegistro=? AND Familia=?;")
 	if es != nil {
 		panic(es.Error())
 	}
 	a, err := stmt.Exec(Laptop.Fecha, Laptop.OC, Laptop.Suc, Laptop.Familia,Laptop.CodigoProducto, Laptop.Marca, Laptop.Modelo, Laptop.Procesador, Laptop.Generacion,
 		Laptop.Velocidad, Laptop.MemGB, Laptop.SerieBateria, Laptop.HddGB, Laptop.HddSerie, Laptop.SerieOriginal,
-		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.IdProducto)
+		Laptop.Pulgadas, Laptop.Camara, Laptop.Eliminador, Laptop.IdProducto,Laptop.Familia)
 	revisarError(err)
 	affected, _ := a.RowsAffected()
 	if affected > 0 {
@@ -803,8 +817,8 @@ func ActualizaLaptop(Laptop modelos.Laptop) (resp modelos.RespuestaSencilla) {
 }
 func ActualizaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Desktop SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?, Modelo=?, Procesador=?," +
-		"Generacion=?, Mem_GB=?,Velocidad=?, HDD=?, HddSerie=?, UnidadOp=?, Fuente=?, Formato=?, Licencia=?, Comentarios=? WHERE IdDesktop=?;")
+	stmt, es := db.Prepare("UPDATE Registro SET Fecha=?, OC=?, SUC=?, Familia=?,CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?, Modelo=?, Procesador=?," +
+		"Generacion=?, Mem_GB=?,Velocidad=?, HDD=?, HddSerie=?, UnidadOp=?, Fuente=?, Formato=?, Licencia=?, Comentarios=? WHERE IdRegistro=? AND Familia='desktop';")
 	if es != nil {
 		panic(es.Error())
 	}
@@ -826,8 +840,8 @@ func ActualizaDesktop(Desktop modelos.Desktop) (resp modelos.RespuestaSencilla) 
 }
 func ActualizaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) {
 
-	stmt, es := db.Prepare("UPDATE Monitores SET Fecha=?, OC=?, Suc=?, Familia=?, CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?," +
-		" Modelo=?, Forma=?,Base=?, Tipo=?, Salidas=?, HDMI=?, Clase=?, Tamaño=? WHERE IdMonitores=?;")
+	stmt, es := db.Prepare("UPDATE Registro SET Fecha=?, OC=?, Suc=?, Familia=?, CodigoProducto=?, Serie=?, SerieOriginal=?, Marca=?," +
+		" Modelo=?, Forma=?,Base=?, TipoPantalla=?, Salidas=?, HDMI=?, Clase=?, Tamaño=? WHERE IdRegistro=?;")
 	if es != nil {
 		panic(es.Error())
 	}

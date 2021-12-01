@@ -13,7 +13,7 @@ type Laptop struct {
 	Procesador string `json:"procesador"`
 	Generacion int    `json:"generacion"`
 	Velocidad  string `json:"velocidad"`
-	MemGB      int    `json:"memGB"`
+	MemGB      string    `json:"memGB"`
 	//HddTipo string `json:"hddTipo"`
 	SerieBateria  string `json:"serieBateria"`
 	HddGB         string `json:"hddGB"`

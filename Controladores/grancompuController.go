@@ -6,6 +6,7 @@ import (
 	utilidades "ControlInvetario/Utilidades"
 	"encoding/json"
 	"fmt"
+	"github.com/fatih/structs"
 	"net/http"
 )
 
@@ -19,10 +20,20 @@ func Guardar(w http.ResponseWriter, r *http.Request) {
 	//bd.Guardar(items)
 	json.NewEncoder(w).Encode(bd.Guardar(utilidades.ReadXlsx(Archivo)))
 }
+func Compra(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20)
+	Archivo, _, err := r.FormFile("file")
+	if err != nil {
+		fmt.Println(err)
+	}
+	//items:=utilidades.ReadXlsx(Archivo)
+	//bd.Guardar(items)
+	json.NewEncoder(w).Encode(utilidades.ReadXlsx(Archivo))
+}
 
 func ObteneInventario(w http.ResponseWriter, r *http.Request) {
 
-	json.NewEncoder(w).Encode(bd.GetInventario())
+	json.NewEncoder(w).Encode(utilidades.ListaCompra())
 }
 func ObteneMonitores(w http.ResponseWriter, r *http.Request) {
 
@@ -34,6 +45,23 @@ func ObteneDesktops(w http.ResponseWriter, r *http.Request) {
 }
 func ObteneLaptops(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bd.GetLaptop())
+	fmt.Println(w)
+}
+
+func ImpLaptops(w http.ResponseWriter, r *http.Request) {
+	var base []map[string]interface{}
+	var excel []map[string]string
+	for _,a := range bd.GetLaptop() {
+		base=append (base, structs.Map(a))
+	}
+	col,name:=utilidades.NombrarCol(base[0])
+	excel= append(excel,col)
+
+	for n,cel:= range base{
+		excel=append(excel,utilidades.AsignarCel(cel,n+2,name))
+	}
+	fmt.Println(excel)
+	utilidades.GenExcel(excel)
 }
 func ObteneAllione(w http.ResponseWriter, r *http.Request) {
 

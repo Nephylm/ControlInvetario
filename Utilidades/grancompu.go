@@ -162,9 +162,13 @@ func ReadXlsx(Archivo multipart.File) []Item {
 			n++
 		}
 	}
+	Lista.Data = items
+	fmt.Print(Lista)
 	return items
 }
-
+func ListaCompra()(lista[]Item){
+	return Lista.Data
+}
 // Muestra total de productos en base a su modelo
 func Contador(productos []Item, Clasificacion string) []map[string]string {
 	var inventario []map[string]string
@@ -249,3 +253,70 @@ func clear() map[string]string {
 func Minusculas(palabra string) string {
 	return strings.ToLower(palabra)
 }
+
+func GenExcel(excel []map[string]string){
+	xlsx := excelize.NewFile()
+	for _, ex := range excel {
+		for k, v := range ex {
+			xlsx.SetCellValue("Sheet1", k, v)
+		}
+	}
+	err := xlsx.SaveAs("./Inventario.xlsx")
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+func NombrarCol(a map[string]interface{})(campos map[string]string , columna []string){
+	col:=Columna(len(a))
+	i:=0
+	camp:=make(map[string]string)
+	for k,_:= range a{
+		camp[col[i]+"1"]=k
+		columna = append(columna, k)
+		i++
+	}
+	campos=camp
+	return
+}
+func AsignarCel(fila map[string]interface{},n int,name []string)(celda map[string]string){
+	col:=Columna(len(fila))
+
+	camp:=make(map[string]string)
+	i:=0
+	for _,nomCamp:=range name{
+
+		for v,k:= range fila{
+			if v==nomCamp{
+				camp[col[i]+strconv.Itoa(n)]=fmt.Sprintf("%v", k)
+				i++
+			}
+
+		}
+	}
+	celda=camp
+	return
+}
+/*func AsignarCel(fila []map[string]interface{})(campos map[string]string){
+	n:=2
+	camp:=make(map[string]string)
+	for _,a := range fila{
+		col:=Columna(len(a))
+		i:=0
+		for _,k:= range a{
+			camp[col[i]+strconv.Itoa(n)]=fmt.Sprintf("%v", k)
+			i++
+		}
+		n++
+	}
+	campos=camp
+	return
+}*/
+func Columna(n int)(col []string)  {
+	letra:=65
+	for i := 0; i < n; i++ {
+		col =append(col,(string(rune(letra))))
+		letra++
+	}
+	return
+}
+

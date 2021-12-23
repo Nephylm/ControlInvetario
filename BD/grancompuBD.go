@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	IdCodigo          int
 	CodigoProducto 	  string
 	Final             string
 	Ram               string
@@ -860,4 +861,52 @@ func ActualizaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) 
 		fmt.Println("Error al Actualizar")
 	}
 	return
+}
+
+
+
+func GetCodigoProducto() (Data []modelos.CodigoProducto) {
+	listado, _ := db.Query("SELECT idListaPrecio,Clave_Producto,Familia,Procesador,Generacion,Gabinete FROM Lista_Precio;")
+	revisarError(err)
+	for listado.Next() {
+		err = listado.Scan(
+			&IdCodigo,
+			&CodigoProducto,
+			&Familia,
+			&Procesador,
+			&Generacion,
+			&Formato,
+		)
+		revisarError(err)
+			Data = append(Data, modelos.CodigoProducto{
+				IdCodigo:IdCodigo,
+				CodigoProducto: CodigoProducto,
+				Familia: Familia,
+				Procesador: Procesador,
+				Generacion: Generacion,
+				Formato: Formato,
+		})
+	}
+	return
+}
+
+func Clasificador()map[string][]modelos.CodigoProducto  {
+	var listaCod = make(map[string][]modelos.CodigoProducto)
+	for _, codigoProducto := range GetCodigoProducto(){
+		fmt.Println(codigoProducto.Familia)
+		switch codigoProducto.Familia {
+		case "DESKTOP":
+			listaCod["DESKTOP"]= append(listaCod["DESKTOP"], codigoProducto)
+			break
+		case "ALLINONE":
+			listaCod["ALLINONE"]= append(listaCod["ALLINONE"], codigoProducto)
+			break
+		case "LAPTOP":
+			listaCod["ALLINONE"]= append(listaCod["ALLINONE"], codigoProducto)
+			break
+		default:
+			break
+		}
+	}
+	return listaCod
 }

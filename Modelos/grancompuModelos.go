@@ -109,3 +109,54 @@ type AllInOne struct {
 	Licencia      string `json:"licencia"`
 	Comentarios   string `json:"comentarios"`
 }
+
+//Estructura General
+type Mercancia struct {
+	IdProducto		int		`json:"idProducto"`
+	Familia			string	`json:"familia,omitempty"`
+	SerieOriginal	string	`json:"serieOriginal,omitempty"`
+	Fecha         string `json:"fecha,omitempty"`
+
+	OC            	int    `json:"oc,omitempty"`
+	SUC           	string `json:"sucursal,omitempty"`
+	Serie         	string    `json:"serie,omitempty"`
+	Marca         	string `json:"marca,omitempty"`
+	Modelo        	string `json:"modelo,omitempty"`
+	Procesador    	string `json:"procesador,omitempty"`
+	Gen           	int    `json:"generacion,omitempty"`
+	Mem_GB        	string `json:"memGB,omitempty"`
+	Velocidad     	string `json:"velocidad,omitempty"`
+	HDD           	string `json:"hdd,omitempty"`
+	HddSerie      	string `json:"hddSerie,omitempty"`
+	UnidadOp      	string `json:"unidadOptica,omitempty"`
+	Fuente        	string `json:"fuenteSerie,omitempty"`
+	Formato       	string `json:"formato,omitempty"`
+	Pulgadas      	string `json:"pulgadas,omitempty"`
+	Licencia      	string `json:"licencia,omitempty"`
+	Comentarios   	string `json:"comentarios,omitempty"`
+	CodigoProducto	string `json:"codigoProducto,omitempty"`
+	Forma          	string `json:"forma,omitempty"`
+	Base           	string `json:"base,omitempty"`
+	Tipo           	string `json:"tipo,omitempty"`
+	Salidas        	string `json:"salidas,omitempty"`
+	HDMI           	string `json:"HDMI,omitempty"`
+	Clase          	string `json:"clase,omitempty"`
+	Tamanio         string `json:"tamaño,omitempty"`
+	Activo         	int    `json:"activo,omitempty"`
+	FechaVent      	string `json:"fechaVent,omitempty"`
+	SerieDoc       	string `json:"serieDoc,omitempty"`
+	HddGB       	string `json:"hddGB,omitempty"`
+	Camara        	string `json:"camara,omitempty"`
+	SerieBateria  string `json:"serieBateria,omitempty"`
+	Eliminador    string `json:"eliminador,omitempty"`
+	DocVent string `json:"doc_vent,omitempty"`
+}
+
+type CodigoProducto struct {
+	IdCodigo		int 	`json:"idCodigo"`
+	Familia			string	`json:"familia"`
+	CodigoProducto	string	`json:"codigoProducto"`
+	Procesador		string	`json:"procesador"`
+	Generacion		int		`json:"generacion"`
+	Formato			string	`json:"formato"`
+}

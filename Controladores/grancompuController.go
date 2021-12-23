@@ -172,3 +172,8 @@ func ActualizaMonitor(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(resp.CodigoRespHTTP)
 	json.NewEncoder(w).Encode(resp.Response)
 }
+
+func ObtenerLista(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(bd.Clasificador())
+	fmt.Println(w)
+}

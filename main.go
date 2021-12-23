@@ -65,6 +65,11 @@ func api() {
 	gorillaRoute.HandleFunc("/ActualizaDesktop", grancompuC.ActualizaDesktop).Methods("POST")
 	gorillaRoute.HandleFunc("/ActualizaMonitor", grancompuC.ActualizaMonitor).Methods("POST")
 
+	//Invetario con Docs
+	gorillaRoute.HandleFunc("/GuardarMercancias", grancompuC.GuardarMercancias).Methods("POST")
+	gorillaRoute.HandleFunc("/ActualizarMercancia", grancompuC.ActualizaLaptop).Methods("PUT")
+	gorillaRoute.HandleFunc("/ConsultaMercancias", grancompuC.ConsultarMercancias).Methods("GET")
+
 	//INVENTARIO CHOCOLATES
 	//Aztualiza datos faltantes de insumo
 	gorillaRoute.HandleFunc("/ActualizarInsumo", grancompuC.ActualizarInsumo).Methods("POST")
@@ -87,6 +92,7 @@ func api() {
 	gorillaRoute.HandleFunc("/RegistrarInsumos", grancompuC.CargaDInsumos).Methods("GET")
 
 	//ruta pra probar metodos
+	gorillaRoute.HandleFunc("/ObtenerListaP", grancompuC.ObtenerLista).Methods("GET")
 	gorillaRoute.HandleFunc("/Pruebas", grancompuC.Pruebas).Methods("GET")
 	gorillaRoute.HandleFunc("/ObtenerProductos", grancompuC.ObtenerProductoOrden).Methods("GET")
 	//'PathPrefix' estamos indicando apartir de que direccion se va a escuchar para publicar archivos
@@ -108,6 +114,7 @@ func api() {
 		OptionsPassthrough: true,
 		Debug: true,*/
 	}).Handler(gorillaRoute)
+
 
 	//Se lanza el servidor en el puerto 8081
 	//en caso de existir error, se mostrará con 'log.Fatal'

@@ -22,15 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c76a0b74-4b72-48cd-b816-64d2866e32e5" name="Default Changelist" comment="Correcciones">
-      <change afterPath="$PROJECT_DIR$/BD/Inventario-OrdenBD.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Controladores/Inventario-OrdenController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BD/grancompuBD.go" beforeDir="false" afterPath="$PROJECT_DIR$/BD/grancompuBD.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controladores/grancompuController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Controladores/grancompuController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modelos/grancompuModelos.go" beforeDir="false" afterPath="$PROJECT_DIR$/Modelos/grancompuModelos.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-    </list>
+    <list default="true" id="c76a0b74-4b72-48cd-b816-64d2866e32e5" name="Default Changelist" comment="Correcciones" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,7 +35,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../Program Files/Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -54,6 +46,9 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="ProjectId" id="1gk7TAAOl0YBYM1wLzAb1V7brfX" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">

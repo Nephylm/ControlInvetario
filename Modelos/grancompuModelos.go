@@ -153,10 +153,10 @@ type Mercancia struct {
 }
 
 type CodigoProducto struct {
-	IdCodigo		int 	`json:"idCodigo"`
-	Familia			string	`json:"familia"`
-	CodigoProducto	string	`json:"codigoProducto"`
-	Procesador		string	`json:"procesador"`
-	Generacion		int		`json:"generacion"`
-	Formato			string	`json:"formato"`
+	IdCodigo		int 	`json:"idCodigo,omitempty"`
+	Familia			string	`json:"familia,omitempty"`
+	CodigoProducto	string	`json:"codigoProducto,omitempty"`
+	Procesador		string	`json:"procesador,omitempty"`
+	Generacion		int		`json:"generacion,omitempty"`
+	Formato			string	`json:"formato,omitempty"`
 }

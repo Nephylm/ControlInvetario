@@ -93,6 +93,7 @@ func api() {
 
 	//ruta pra probar metodos
 	gorillaRoute.HandleFunc("/ObtenerListaP", grancompuC.ObtenerLista).Methods("GET")
+	gorillaRoute.HandleFunc("/ObtenerCodigo", grancompuC.ObtenerCodigo).Methods("POST")
 	gorillaRoute.HandleFunc("/Pruebas", grancompuC.Pruebas).Methods("GET")
 	gorillaRoute.HandleFunc("/ObtenerProductos", grancompuC.ObtenerProductoOrden).Methods("GET")
 	//'PathPrefix' estamos indicando apartir de que direccion se va a escuchar para publicar archivos

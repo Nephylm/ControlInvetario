@@ -866,12 +866,14 @@ func ActualizaMonitor(Monitor modelos.Monitor) (resp modelos.RespuestaSencilla) 
 
 
 func GetCodigoProducto() (Data []modelos.CodigoProducto) {
-	listado, _ := db.Query("SELECT idListaPrecio,Clave_Producto,Familia,Procesador,Generacion,Gabinete FROM Lista_Precio;")
+	listado, _ := db.Query("SELECT idListaPrecio,Clave_Producto,Letra,Familia,Procesador,Generacion,Gabinete FROM Lista_Precio;")
 	revisarError(err)
 	for listado.Next() {
+		var Letra string
 		err = listado.Scan(
 			&IdCodigo,
 			&CodigoProducto,
+			&Letra,
 			&Familia,
 			&Procesador,
 			&Generacion,
@@ -880,7 +882,7 @@ func GetCodigoProducto() (Data []modelos.CodigoProducto) {
 		revisarError(err)
 			Data = append(Data, modelos.CodigoProducto{
 				IdCodigo:IdCodigo,
-				CodigoProducto: CodigoProducto,
+				CodigoProducto: CodigoProducto+Letra,
 				Familia: Familia,
 				Procesador: Procesador,
 				Generacion: Generacion,
@@ -890,6 +892,63 @@ func GetCodigoProducto() (Data []modelos.CodigoProducto) {
 	return
 }
 
+func GenerarCodigoProducto(producto modelos.CodigoProducto) (Data []modelos.CodigoProducto) {
+	listado, err := db.Query("SELECT Clave_Producto,Letra FROM Lista_Precio WHERE Familia=? AND Procesador=? AND Generacion=?;",
+		producto.Familia,producto.Procesador,producto.Procesador)
+	revisarError(err)
+	var Letra string
+	for listado.Next() {
+		err = listado.Scan(
+			&CodigoProducto,
+			&Letra,
+		)
+		revisarError(err)
+	}
+	listado, err = db.Query("SELECT Letra FROM Lista_Precio WHERE Familia=? AND Procesador=? AND Generacion=? AND Gabinete=?;",
+		producto.Familia,producto.Procesador,producto.Generacion,producto.Formato)
+	revisarError(err)
+	contenido:=listado
+	if contenido.Next(){
+		//fmt.Println(listado)
+			err = listado.Scan(
+				&Letra,
+			)
+			revisarError(err)
+			Data = append(Data, modelos.CodigoProducto{
+				CodigoProducto: CodigoProducto+Letra,
+			})
+
+	}else {
+		nuevaLetra:=AumentarLetra(Letra)
+		Data = append(Data, modelos.CodigoProducto{
+			CodigoProducto: CodigoProducto+nuevaLetra,
+		})
+		guardarCodigo(producto,CodigoProducto,nuevaLetra)
+	}
+
+	return
+}
+func guardarCodigo(producto modelos.CodigoProducto, Clave_Producto string,Letra string) {
+	stmt, es := db.Prepare("INSERT INTO Lista_Precio (Clave_Producto,Letra,Familia,Procesador,Generacion,Gabinete) " +
+		"SELECT ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT * FROM Lista_Precio WHERE Clave_Producto=? AND Letra=?);")
+	if es != nil {
+		panic(es.Error())
+	}
+	a, err := stmt.Exec(Clave_Producto,Letra,producto.Familia,producto.Procesador,producto.Generacion,producto.Formato,Clave_Producto,Letra)
+	revisarError(err)
+	affected, _ := a.RowsAffected()
+	if affected > 0 {
+		fmt.Println("Guardado Exitoso")
+	} else {
+		fmt.Println("Error al Guardar")
+	}
+	return
+}
+func AumentarLetra(letra string) (nuevaLetra string) {
+	viejaLetra:=int(letra[0])
+	nuevaLetra=string(rune(viejaLetra+1))
+return
+}
 func Clasificador()map[string][]modelos.CodigoProducto  {
 	var listaCod = make(map[string][]modelos.CodigoProducto)
 	for _, codigoProducto := range GetCodigoProducto(){

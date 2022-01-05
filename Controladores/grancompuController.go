@@ -177,3 +177,13 @@ func ObtenerLista(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bd.Clasificador())
 	fmt.Println(w)
 }
+
+func ObtenerCodigo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//crea item y array de items
+	var codigo modelos.CodigoProducto
+	//des serializa el json a una estructura de Monitor
+	json.NewDecoder(r.Body).Decode(&codigo)
+	json.NewEncoder(w).Encode(bd.GenerarCodigoProducto(codigo))
+	fmt.Println(w)
+}
